@@ -1,0 +1,97 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: service-gateway #服务名
+  cloud: #注册到Nacos
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 6s # 超时时间
+      discovery:
+        locator:
+          enabled: false #开放服务名访问方式
+          lower-case-service-id: true #服务名小写
+      routes: #路由配置
+        - id: application-user #指定服务名
+          uri: lb://service-user #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/user/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-uaa #指定服务名
+          uri: lb://service-uaa #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/uaa/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-course #指定服务名
+          uri: lb://service-course #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/course/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-system #指定服务名
+          uri: lb://service-system #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/system/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-search #指定服务名
+          uri: lb://service-search #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/search/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-pay #指定服务名
+          uri: lb://service-pay #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/pay/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-order #指定服务名
+          uri: lb://service-order #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/order/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-media #指定服务名
+          uri: lb://service-media #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/media/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-kill #指定服务名
+          uri: lb://service-kill #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/kill/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+        - id: application-common #指定服务名
+          uri: lb://service-common #去注册中心找这个服务名
+          predicates: #断言，匹配访问的路径
+            - Path=/tigercc/common/**    #服务访问路径
+          filters:
+            - StripPrefix=2
+      globalcors: #跨域配置
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allow-credentials: true
+            allowed-headers: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - PATCH
+              - OPTIONS
+              - HEAD
+              - CONNECT
+              - TRACE
+  #允许Bean覆盖
+  main:
+    allow-bean-definition-overriding: true

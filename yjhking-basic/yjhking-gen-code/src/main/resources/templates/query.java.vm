@@ -1,0 +1,8 @@
+package org.yjhking.tigercc.query;
+
+/**
+ *
+ * @author ${author}
+ */
+public class ${table.entityName}Query extends BaseQuery {
+}

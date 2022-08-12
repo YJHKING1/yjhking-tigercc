@@ -1,3 +1,4 @@
+# 默认忽略的文件
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -9,3 +10,12 @@ buildNumber.properties
 .mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+/shelf/
+/workspace.xml
+# 基于编辑器的 HTTP 客户端请求
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea
+/tigercc-ui

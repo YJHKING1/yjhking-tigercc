@@ -1,0 +1,18 @@
+server:
+  port: 10040
+spring:
+  application:
+    name: service-uaa #服务名
+  cloud: #注册到Nacos
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql:///tigercc-uaa?serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource # 使用ali的连接池
+mybatis-plus:
+  mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
+  type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
