@@ -48,8 +48,7 @@ public class GenteratorCode {
                 "t_user_address",
                 "t_user_base_info",
                 "t_user_grow_log",
-                "t_user_real_info",
-                "undo_log"
+                "t_user_real_info"
         ); // 需要生成的表
         mpg.setStrategy(strategy);
         // 包配置
