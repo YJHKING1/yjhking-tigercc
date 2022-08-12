@@ -1,11 +1,11 @@
 package org.yjhking.tigercc.mapper;
 
-import org.yjhking.tigercc.domain.UserAccount;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.yjhking.tigercc.domain.UserAccount;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author YJH
