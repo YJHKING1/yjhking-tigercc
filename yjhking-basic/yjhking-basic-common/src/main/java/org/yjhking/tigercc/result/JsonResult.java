@@ -1,6 +1,7 @@
 package org.yjhking.tigercc.result;
 
 import lombok.Data;
+import org.yjhking.tigercc.enums.GlobalErrorCode;
 
 //返回JSON结果
 @Data
@@ -63,5 +64,9 @@ public class JsonResult {
      **/
     public static JsonResult error(String message) {
         return error(message, null);
+    }
+    
+    public static JsonResult error(GlobalErrorCode globalErrorCode) {
+        return error(globalErrorCode.getMessage(), globalErrorCode.getCode());
     }
 }
