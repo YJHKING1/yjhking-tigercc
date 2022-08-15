@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.service;
 
+import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.domain.UserAccount;
 import com.baomidou.mybatisplus.service.IService;
 
@@ -12,5 +13,6 @@ import com.baomidou.mybatisplus.service.IService;
  * @since 2022-08-12
  */
 public interface IUserAccountService extends IService<UserAccount> {
-
+    
+    void save(User user);
 }

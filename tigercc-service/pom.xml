@@ -15,6 +15,7 @@
         <module>tigercc-service-system</module>
         <module>tigercc-service-uaa</module>
         <module>tigercc-service-user</module>
+        <module>tigercc-service-common</module>
     </modules>
 
     <properties>

@@ -14,7 +14,6 @@
     <modules>
         <module>tigercc-basic-common</module>
         <module>tigercc-basic-dependency</module>
-        <module>tigercc-service-dependency</module>
     </modules>
 
     <properties>

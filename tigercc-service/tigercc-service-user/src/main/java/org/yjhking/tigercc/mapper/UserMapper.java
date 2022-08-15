@@ -12,5 +12,4 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @since 2022-08-12
  */
 public interface UserMapper extends BaseMapper<User> {
-
 }

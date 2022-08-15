@@ -1,5 +1,7 @@
 package org.yjhking.tigercc.utils;
 
+import org.yjhking.tigercc.enums.GlobalErrorCode;
+import org.yjhking.tigercc.exception.GlobalCustomException;
 import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
@@ -13,11 +15,14 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Created by Wzy
+ * 生成图片验证码工具类
+ *
+ * @author YJH
  */
 public class VerifyCodeUtils {
-    
-    //使用到Algerian字体，系统里没有的话需要安装字体，字体只显示大写，去掉了1,0,i,o几个容易混淆的字符
+    /**
+     * 使用到Algerian字体，系统里没有的话需要安装字体，字体只显示大写，去掉了1,0,i,o几个容易混淆的字符
+     */
     public static final String VERIFY_CODES = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
     private static Random random = new Random();
     
@@ -26,7 +31,7 @@ public class VerifyCodeUtils {
      * 使用系统默认字符源生成验证码
      *
      * @param verifySize 验证码长度
-     * @return
+     * @return 验证码
      */
     public static String generateVerifyCode(int verifySize) {
         return generateVerifyCode(verifySize, VERIFY_CODES);
@@ -37,7 +42,7 @@ public class VerifyCodeUtils {
      *
      * @param verifySize 验证码长度
      * @param sources    验证码字符源
-     * @return
+     * @return 验证码
      */
     public static String generateVerifyCode(int verifySize, String sources) {
         if (sources == null || sources.length() == 0) {
@@ -53,7 +58,12 @@ public class VerifyCodeUtils {
     }
     
     /**
-     * 输出指定验证码图片流
+     * 输出指定验证码的图片流
+     *
+     * @param w    宽度-px
+     * @param h    高度-px
+     * @param os   输出流
+     * @param code 验证码
      */
     public static void outputImage(int w, int h, OutputStream os, String code) throws IOException {
         int verifySize = code.length();
@@ -118,6 +128,13 @@ public class VerifyCodeUtils {
         ImageIO.write(image, "jpg", os);
     }
     
+    /**
+     * 生成随机RGB颜色
+     *
+     * @param fc 颜色范围最低值
+     * @param bc 颜色范围最高值
+     * @return RGB颜色
+     */
     private static Color getRandColor(int fc, int bc) {
         if (fc > 255)
             fc = 255;
@@ -129,6 +146,11 @@ public class VerifyCodeUtils {
         return new Color(r, g, b);
     }
     
+    /**
+     * 生成随机颜色
+     *
+     * @return 随机颜色
+     */
     private static int getRandomIntColor() {
         int[] rgb = getRandomRgb();
         int color = 0;
@@ -139,6 +161,11 @@ public class VerifyCodeUtils {
         return color;
     }
     
+    /**
+     * 生成随机RGB
+     *
+     * @return RGB数组
+     */
     private static int[] getRandomRgb() {
         int[] rgb = new int[3];
         for (int i = 0; i < 3; i++) {
@@ -147,11 +174,27 @@ public class VerifyCodeUtils {
         return rgb;
     }
     
+    /**
+     * 生成干扰线
+     *
+     * @param g     图形对象
+     * @param w1    图片宽度
+     * @param h1    图片高度
+     * @param color 背景色
+     */
     private static void shear(Graphics g, int w1, int h1, Color color) {
         shearX(g, w1, h1, color);
         shearY(g, w1, h1, color);
     }
     
+    /**
+     * 水平方向扭曲
+     *
+     * @param g     图形对象
+     * @param w1    图片宽度
+     * @param h1    图片高度
+     * @param color 背景色
+     */
     private static void shearX(Graphics g, int w1, int h1, Color color) {
         
         int period = random.nextInt(2);
@@ -175,6 +218,14 @@ public class VerifyCodeUtils {
         
     }
     
+    /**
+     * 垂直方向扭曲
+     *
+     * @param g     图形对象
+     * @param w1    图片宽度
+     * @param h1    图片高度
+     * @param color 背景色
+     */
     private static void shearY(Graphics g, int w1, int h1, Color color) {
         
         int period = random.nextInt(40) + 10; // 50;
@@ -200,20 +251,25 @@ public class VerifyCodeUtils {
     
     /**
      * 获取随机验证码及其加密图片
+     *
+     * @param w    图片宽度
+     * @param h    图片高度
+     * @param code 验证码
+     * @return base64格式的图片
      */
     public static String verifyCode(int w, int h, String code) {
-        //创建一个 BASE64编码器
-        BASE64Encoder encoder = new BASE64Encoder();
-        //二进制输出流，用来装图片的
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        //画一个w宽，h高的图片，把code画上去，然后把图片写入 data
         try {
+            //base64编码器
+            BASE64Encoder encoder = new BASE64Encoder();
+            //准备输出流
+            ByteArrayOutputStream data = new ByteArrayOutputStream();
+            //使用code生成w宽 h高的图片，并将结果图片存入data流中
             outputImage(w, h, data, code);
+            //使用base64编码成String
+            return encoder.encode(data.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("图验证码创建失败");
+            throw new GlobalCustomException(GlobalErrorCode.COMMON_VERIFICATION_ERROR);
         }
-        //把data(图片）进行base64编码
-        return encoder.encode(data.toByteArray());
     }
 }

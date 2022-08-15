@@ -102,6 +102,7 @@
 | tigercc-service-order   | 10100 | 订单中心 |
 | tigercc-service-pay     | 10110 | 支付中心 |
 | tigercc-service-kill    | 10120 | 秒杀服务 |
+| tigercc-service-common  | 10130 | 公共服务 |
 
 #### 5.1.2 前端站点规划
 
@@ -136,10 +137,12 @@ yjhking-tigercc
         │       └── tigercc-service-system      // 管理服务:controller,service,mapper,mapper.xml
         │       └── tigercc-service-uaa         // 认证授服务
         │       └── tigercc-service-user        // 用户服务
+        │       └── tigercc-service-common      // 公共服务
         ├── tigercc-pojo                        // 对象模型
         │       └── tigercc-pojo-system         // 管理服务对象模型:Domain,Dto,Vo,To,SystemQuery
         │       └── tigercc-pojo-uaa            // 认证服务的对象模型
         │       └── tigercc-pojo-user           // 用户服务的对象模型
+        │       └── tigercc-pojo-common         // 公共服务的对象模型
         ├── tigercc-api                         // 服务的API，使用Feign通信
         │       └──tigercc-api-system           // 管理服务的API:调用system服务的Feign接口
         │       └──tigercc-api-uaa              // 认证服务API

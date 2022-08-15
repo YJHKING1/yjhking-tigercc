@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.web.controller;
 
+import org.yjhking.tigercc.dto.RegisterDto;
 import org.yjhking.tigercc.service.IUserService;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.query.UserQuery;
@@ -8,6 +9,8 @@ import org.yjhking.tigercc.result.PageList;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
@@ -64,5 +67,9 @@ public class UserController {
         Page<User> page = new Page<User>(query.getPage(), query.getRows());
         page = userService.selectPage(page);
         return JsonResult.success(new PageList<User>(page.getTotal(), page.getRecords()));
+    }
+    @PostMapping("/register")
+    public JsonResult register(@RequestBody @Valid RegisterDto dto){
+        return userService.register(dto);
     }
 }

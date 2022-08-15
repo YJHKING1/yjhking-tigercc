@@ -1,0 +1,33 @@
+server:
+  port: 10130
+spring:
+  application:
+    name: service-common #服务名
+  cloud: #注册到Nacos
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql:///tigercc-common?serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource # 使用ali的连接池
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: root
+    jedis:
+      pool:
+        max-wait: 2000ms
+        min-idle: 2
+        max-idle: 8
+mybatis-plus:
+  mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
+  type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+tigercc:
+  smsverifycode: #验证码发送配置
+    interval: 60 #两次发送的时间间隔(s)
+    length: 6 #验证码长度
+    expire: 10 #验证码过期时间；单位分钟(minute)

@@ -6,6 +6,7 @@ package org.yjhking.tigercc.enums;
  * system服务异常：200xx；
  * uaa服务异常：300xx；
  * user服务异常：400xx
+ * common服务异常：500xx
  */
 public enum GlobalErrorCode {
     // 成功
@@ -21,7 +22,13 @@ public enum GlobalErrorCode {
     UAA_ERROR("30000", "认证服务异常异常！"),
     // user服务异常：400xx
     USER_ERROR("40000", "用户服务异常！"),
-    USER_USERNAME_ERROR("40001", "用户名称不合法！");
+    USER_USERNAME_ERROR("40001", "用户名称不合法！"),
+    USER_PHONE_REPEAT_ERROR("40002", "手机已注册！"),
+    // common服务异常：500xx
+    COMMON_VERIFICATION_ERROR("50001", "验证码创建失败！"),
+    COMMON_VERIFICATION_REPEAT_SEND("50002", "请勿重发验证码！"),
+    COMMON_PHONE_VERIFICATION_OVERDUE("50003", "手机验证码过期！"),
+    COMMON_PHONE_VERIFICATION_ERROR("50004", "手机验证码错误！");
     // 异常码
     private String code;
     // 异常信息

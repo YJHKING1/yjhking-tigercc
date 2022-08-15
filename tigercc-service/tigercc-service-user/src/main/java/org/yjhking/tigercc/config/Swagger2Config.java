@@ -27,8 +27,8 @@ public class Swagger2Config {
     
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("管理系统")
-                .description("管理系统接口文档说明")
+                .title("用户中心")
+                .description("用户中心接口文档说明")
                 .contact(new Contact("YJH", "yjhking.org", "yjhking@yjhking.org"))
                 .version("1.0")
                 .build();

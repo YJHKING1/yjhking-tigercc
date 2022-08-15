@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+import org.yjhking.tigercc.constants.RegularConstants;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -38,7 +39,7 @@ public class Employee extends Model<Employee> {
      * 电话
      */
     // 电话格式校验
-    @Pattern(message = "电话格式不正确！", regexp = "^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\\d{8}$")
+    @Pattern(message = "电话格式不正确！", regexp = RegularConstants.PHONE_REGULAR)
     private String tel;
     /**
      * 邮箱

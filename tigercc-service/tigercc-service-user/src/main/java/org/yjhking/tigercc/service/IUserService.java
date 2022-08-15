@@ -2,6 +2,8 @@ package org.yjhking.tigercc.service;
 
 import org.yjhking.tigercc.domain.User;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.dto.RegisterDto;
+import org.yjhking.tigercc.result.JsonResult;
 
 /**
  * <p>
@@ -12,5 +14,6 @@ import com.baomidou.mybatisplus.service.IService;
  * @since 2022-08-12
  */
 public interface IUserService extends IService<User> {
-
+    
+    JsonResult register(RegisterDto dto);
 }
