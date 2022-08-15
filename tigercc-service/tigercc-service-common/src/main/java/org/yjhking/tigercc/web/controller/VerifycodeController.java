@@ -30,9 +30,8 @@ public class VerifycodeController {
     /**
      * 获取图片验证码
      */
-    @GetMapping("/imageCode")
-    public JsonResult imageCode() {
-        // todo 图片验证码
-        return null;
+    @GetMapping("/imageCode/{key}")
+    public JsonResult imageCode(@PathVariable("key") String key) {
+        return verifycodeService.imageCode(key);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.TitleConstants;
 import org.yjhking.tigercc.constants.VerifyCodeConstants;
+import org.yjhking.tigercc.dto.IMGVerifyCodeProperties;
 import org.yjhking.tigercc.dto.MobileCodeDto;
 import org.yjhking.tigercc.dto.SMSVerifyCodeProperties;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
@@ -14,6 +15,7 @@ import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IMessageSmsService;
 import org.yjhking.tigercc.service.IVerifycodeService;
 import org.yjhking.tigercc.utils.StrUtils;
+import org.yjhking.tigercc.utils.VerifyCodeUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +31,11 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
     @Autowired
     private SMSVerifyCodeProperties smsProperties;
     /**
+     * 图片验证码配置
+     */
+    @Autowired
+    private IMGVerifyCodeProperties imgProperties;
+    /**
      * redis
      */
     @Autowired
@@ -41,7 +48,14 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
     
     @Override
     public JsonResult sendSmsCode(MobileCodeDto mobileCodeDto) {
-        // todo 图片验证码校验
+        // 图片验证码校验
+        String imageCodeKeyTrue = (String) redisTemplate.opsForValue().get(mobileCodeDto.getImageCodeKey());
+        if (imageCodeKeyTrue == null || imageCodeKeyTrue.trim().length() == 0) {
+            throw new GlobalCustomException(GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
+        }
+        if (!imageCodeKeyTrue.equalsIgnoreCase(mobileCodeDto.getImageCode())) {
+            throw new GlobalCustomException(GlobalErrorCode.COMMON_IMG_VERIFICATION_ERROR);
+        }
         // 判断是否有未过期验证码
         String codeString = (String) redisTemplate.opsForValue()
                 .get(VerifyCodeConstants.REGISTER_CODE_PREFIX + mobileCodeDto.getMobile());
@@ -68,6 +82,24 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
         messageSmsService.saveSmsMessage(TitleConstants.REGISTRATION_VERIFICATION_CODE, smsMessage
                 , mobileCodeDto.getMobile());
         return new JsonResult();
+    }
+    
+    @Override
+    public JsonResult imageCode(String key) {
+        // 判断UUID不为空
+        if (key == null || key.trim().length() == 0) {
+            throw new GlobalCustomException(GlobalErrorCode.COMMON_IMG_VERIFICATION_NULL);
+        }
+        // 生成随机验证码
+        String code = VerifyCodeUtils.generateVerifyCode(imgProperties.getLength());
+        // 把验证码的值存储到Redis,以前台传入的UUID作为key
+        redisTemplate.opsForValue().set(key, code, imgProperties.getExpire(), TimeUnit.MINUTES);
+        // 图片验证码宽度
+        int codeImgWidth = 115;
+        // 图片验证码高度
+        int codeImgHeight = 40;
+        // 把验证码的值转为base64格式的图片，并返回
+        return JsonResult.success(VerifyCodeUtils.verifyCode(codeImgWidth, codeImgHeight, code));
     }
     
     /**

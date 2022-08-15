@@ -27,7 +27,10 @@ mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
 tigercc:
-  smsverifycode: #验证码发送配置
-    interval: 60 #两次发送的时间间隔(s)
-    length: 6 #验证码长度
-    expire: 10 #验证码过期时间；单位分钟(minute)
+  smsverifycode: # 短信验证码发送配置
+    interval: 60 # 两次发送的时间间隔(s)
+    length: 6 # 验证码长度
+    expire: 10 # 验证码过期时间；单位分钟(minute)
+  imgverifycode: # 图片验证码配置
+    length: 4 # 验证码长度
+    expire: 10 # 验证码过期时间；单位分钟(minute)

@@ -28,7 +28,10 @@ public enum GlobalErrorCode {
     COMMON_VERIFICATION_ERROR("50001", "验证码创建失败！"),
     COMMON_VERIFICATION_REPEAT_SEND("50002", "请勿重发验证码！"),
     COMMON_PHONE_VERIFICATION_OVERDUE("50003", "手机验证码过期！"),
-    COMMON_PHONE_VERIFICATION_ERROR("50004", "手机验证码错误！");
+    COMMON_PHONE_VERIFICATION_ERROR("50004", "手机验证码错误！"),
+    COMMON_IMG_VERIFICATION_NULL("50005", "图片验证码为空！"),
+    COMMON_IMG_VERIFICATION_ERROR("50006", "图片验证码错误！"),
+    COMMON_IMG_VERIFICATION_OVERDUE("50007", "图片验证码过期！");
     // 异常码
     private String code;
     // 异常信息

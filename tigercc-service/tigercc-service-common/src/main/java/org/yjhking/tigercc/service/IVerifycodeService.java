@@ -8,4 +8,6 @@ import org.yjhking.tigercc.result.JsonResult;
  */
 public interface IVerifycodeService {
     JsonResult sendSmsCode(MobileCodeDto mobileCodeDto);
+    
+    JsonResult imageCode(String key);
 }

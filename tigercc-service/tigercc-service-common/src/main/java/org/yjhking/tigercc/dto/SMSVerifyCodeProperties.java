@@ -6,7 +6,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
- * 验证码发送相关配置
+ * 短信验证码发送相关配置
  *
  * @author YJH
  */
