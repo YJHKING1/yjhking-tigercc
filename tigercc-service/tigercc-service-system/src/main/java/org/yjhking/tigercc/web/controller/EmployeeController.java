@@ -1,7 +1,6 @@
 package org.yjhking.tigercc.web.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.Employee;
@@ -10,14 +9,16 @@ import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
 import org.yjhking.tigercc.service.IEmployeeService;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
+
 // @Valid或者@Validated都可以标识需要进行校验
 @Validated
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
     
-    @Autowired
+    @Resource
     public IEmployeeService employeeService;
     
     /**

@@ -23,6 +23,12 @@
             <artifactId>tigercc-pojo-user</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!--uaa api依赖-->
+        <dependency>
+            <groupId>org.yjhking</groupId>
+            <artifactId>tigercc-api-uaa</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--公共依赖-->
         <dependency>
             <groupId>org.yjhking</groupId>

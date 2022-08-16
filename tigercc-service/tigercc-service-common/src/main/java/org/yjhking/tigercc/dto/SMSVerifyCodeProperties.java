@@ -28,4 +28,8 @@ public class SMSVerifyCodeProperties {
      * 过期时间
      */
     private int expire;
+    /**
+     * 短信内容
+     */
+    private String message;
 }

@@ -16,6 +16,14 @@
         <module>tigercc-pojo-uaa</module>
         <module>tigercc-pojo-user</module>
         <module>tigercc-pojo-common</module>
+        <module>tigercc-pojo-course</module>
+        <module>tigercc-pojo-file</module>
+        <module>tigercc-pojo-media</module>
+        <module>tigercc-pojo-search</module>
+        <module>tigercc-pojo-message</module>
+        <module>tigercc-pojo-order</module>
+        <module>tigercc-pojo-pay</module>
+        <module>tigercc-pojo-kill</module>
     </modules>
 
     <properties>

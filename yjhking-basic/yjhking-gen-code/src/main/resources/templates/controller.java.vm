@@ -6,14 +6,15 @@ import org.yjhking.tigercc.query.${entity}Query;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
 import com.baomidou.mybatisplus.plugins.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/${table.entityPath}")
 public class ${entity}Controller {
 
-    @Autowired
+    @Resource
     public ${table.serviceName} ${table.entityPath}Service;
 
     /**

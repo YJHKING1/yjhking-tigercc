@@ -14,4 +14,28 @@ public class VerifyCodeConstants {
      * 微信绑定验证码前缀
      */
     public static final String BINDER_CODE_PREFIX = "register:";
+    /**
+     * 图片验证码宽度
+     */
+    public static final Integer CODE_IMG_WIDTH = 115;
+    /**
+     * 图片验证码高度
+     */
+    public static final Integer CODE_IMG_HEIGHT = 40;
+    /**
+     * redis验证符
+     */
+    public static final String REDIS_VERIFY = ":";
+    /**
+     * redis验证分割第一段
+     */
+    public static final Integer REDIS_VERIFY_FIRST = 0;
+    /**
+     * redis验证分割第二段
+     */
+    public static final Integer REDIS_VERIFY_SECOND = 1;
+    /**
+     * 手机
+     */
+    public static final String PHONE = "phone";
 }

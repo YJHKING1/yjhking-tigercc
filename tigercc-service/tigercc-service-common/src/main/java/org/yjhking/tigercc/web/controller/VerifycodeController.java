@@ -1,11 +1,11 @@
 package org.yjhking.tigercc.web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.dto.MobileCodeDto;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IVerifycodeService;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/verifycode")
 public class VerifycodeController {
-    @Autowired
+    @Resource
     private IVerifycodeService verifycodeService;
     
     /**

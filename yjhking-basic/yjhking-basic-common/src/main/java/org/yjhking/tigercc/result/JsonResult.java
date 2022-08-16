@@ -11,10 +11,10 @@ public class JsonResult {
     
     private boolean success = true;
     
-    private String message = "成功";
+    private String message = GlobalErrorCode.SERVICE_OK.getMessage();
     
-    //错误码，用来描述错误类型 ，1000 表示没有错误
-    private String code = "1000";
+    //错误码，用来描述错误类型
+    private String code = GlobalErrorCode.SERVICE_OK.getCode();
     
     //返回的数据
     private Object data;

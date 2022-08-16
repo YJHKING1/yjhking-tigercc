@@ -1,64 +1,65 @@
 package org.yjhking.tigercc.web.controller;
 
-import org.yjhking.tigercc.service.IUserAccountService;
+import com.baomidou.mybatisplus.plugins.Page;
+import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.UserAccount;
 import org.yjhking.tigercc.query.UserAccountQuery;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
-import com.baomidou.mybatisplus.plugins.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.yjhking.tigercc.service.IUserAccountService;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/userAccount")
 public class UserAccountController {
-
-    @Autowired
+    
+    @Resource
     public IUserAccountService userAccountService;
-
+    
     /**
-    * 保存和修改公用的
-    */
+     * 保存和修改公用的
+     */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public JsonResult saveOrUpdate(@RequestBody UserAccount userAccount) {
-        if (userAccount.getId() != null){
-                userAccountService.updateById(userAccount);
-        }else{
-                userAccountService.insert(userAccount);
+        if (userAccount.getId() != null) {
+            userAccountService.updateById(userAccount);
+        } else {
+            userAccountService.insert(userAccount);
         }
         return JsonResult.success();
     }
-
+    
     /**
-    * 删除对象
-    */
+     * 删除对象
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public JsonResult delete(@PathVariable("id") Long id) {
-            userAccountService.deleteById(id);
+        userAccountService.deleteById(id);
         return JsonResult.success();
     }
-
+    
     /**
-   * 获取对象
-   */
+     * 获取对象
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public JsonResult get(@PathVariable("id") Long id) {
         return JsonResult.success(userAccountService.selectById(id));
     }
-
-
+    
+    
     /**
-    * 查询所有对象
-    */
+     * 查询所有对象
+     */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public JsonResult list() {
         return JsonResult.success(userAccountService.selectList(null));
     }
-
-
+    
+    
     /**
-    * 带条件分页查询数据
-    */
+     * 带条件分页查询数据
+     */
     @RequestMapping(value = "/pagelist", method = RequestMethod.POST)
     public JsonResult page(@RequestBody UserAccountQuery query) {
         Page<UserAccount> page = new Page<UserAccount>(query.getPage(), query.getRows());

@@ -7,6 +7,9 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    alibaba:
+      seata:
+        tx-service-group: fsp_tx_group # 这里和file.conf中事务组名一样
   datasource:
     username: root
     password: root
@@ -16,3 +19,5 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+seata:
+  enableAutoDataSourceProxy: false # 关闭DataSource代理的自动配置，我们要手动配置

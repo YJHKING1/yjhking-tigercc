@@ -2,22 +2,25 @@ package org.yjhking.tigercc.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.VerifyCodeConstants;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.dto.RegisterDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
-import org.yjhking.tigercc.exception.GlobalCustomException;
+import org.yjhking.tigercc.feignclient.UaaFeignClient;
 import org.yjhking.tigercc.mapper.UserMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IUserAccountService;
 import org.yjhking.tigercc.service.IUserBaseInfoService;
 import org.yjhking.tigercc.service.IUserService;
 import org.yjhking.tigercc.utils.BitStatesUtils;
+import org.yjhking.tigercc.utils.VerificationUtils;
 
+import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -35,32 +38,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Autowired
     private StringRedisTemplate redisTemplate;
-    @Autowired
+    @Resource
     private IUserBaseInfoService userBaseInfoService;
-    @Autowired
+    @Resource
     private IUserAccountService userAccountService;
+    @Resource
+    private UaaFeignClient uaaFeignClient;
     
+    // 开启Seata全局事务
+    @GlobalTransactional
     @Override
     public JsonResult register(RegisterDto dto) {
-        // 手机验证码校验
-        String phoneCode = (String) redisTemplate.opsForValue()
-                .get(VerifyCodeConstants.REGISTER_CODE_PREFIX + dto.getMobile());
-        if (phoneCode == null || phoneCode.trim().length() == 0) {
-            throw new GlobalCustomException(GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
-        }
-        if (!phoneCode.split(":")[0].equals(dto.getSmsCode())) {
-            throw new GlobalCustomException(GlobalErrorCode.COMMON_PHONE_VERIFICATION_ERROR);
-        }
-        // 手机是否已经被注册校验
-        EntityWrapper<User> query = new EntityWrapper<>();
-        query.eq("phone", dto.getMobile());
-        User user = selectOne(query);
-        if (user != null) {
-            throw new GlobalCustomException(GlobalErrorCode.USER_PHONE_REPEAT_ERROR);
-        }
-        // todo 远程保存login登录信息
+        // 校验手机验证码和手机是否注册
+        phoneVerification(dto);
+        // 远程保存login登录信息
+        JsonResult uaaResult = uaaFeignClient.insert(dto);
         // 保存user注册信息
-        user = registerDto2User(dto.getMobile());
+        User user = registerDto2User(dto.getMobile());
+        // 设置loginId
+        // todo 封装ObjectMapper工具类
+        ObjectMapper objectMapper = new ObjectMapper();
+        user.setLoginId(objectMapper.convertValue(uaaResult.getData(), Long.class));
         insert(user);
         // 保存user_base_info基本信息
         userBaseInfoService.save(user);
@@ -71,6 +69,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return JsonResult.success();
     }
     
+    /**
+     * 手机验证码校验
+     *
+     * @param dto 注册信息
+     */
+    private void phoneVerification(RegisterDto dto) {
+        String phoneCode = redisTemplate.opsForValue()
+                .get(VerifyCodeConstants.REGISTER_CODE_PREFIX + dto.getMobile());
+        // 过期校验
+        VerificationUtils.isNotEmpty(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
+        // 正确校验
+        // todo 封装redis方法
+        VerificationUtils.isEqualsTrim(phoneCode
+                        .split(VerifyCodeConstants.REDIS_VERIFY)[VerifyCodeConstants.REDIS_VERIFY_FIRST]
+                , dto.getSmsCode(), GlobalErrorCode.COMMON_PHONE_VERIFICATION_ERROR);
+        // 手机是否已经被注册校验
+        EntityWrapper<User> query = new EntityWrapper<>();
+        query.eq(VerifyCodeConstants.PHONE, dto.getMobile());
+        VerificationUtils.isNull(selectOne(query), GlobalErrorCode.USER_PHONE_REPEAT_ERROR);
+    }
+    
+    /**
+     * 注册信息转换为user实体
+     *
+     * @param phone 手机号
+     * @return user实体
+     */
     private User registerDto2User(String phone) {
         User user = new User();
         user.setCreateTime(new Date().getTime());

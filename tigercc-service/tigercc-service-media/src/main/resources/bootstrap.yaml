@@ -1,0 +1,13 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true # 开启bean覆盖
+  profiles:
+    active: dev # 环境
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848 # 注册中心地址
+        prefix: application-media # 配置前缀
+        file-extension: yaml # 配置后缀
+        group: DEFAULT_GROUP # 默认分组
+        namespace: feea1eb0-035a-40b2-ab05-a26072437615 # 命名空间

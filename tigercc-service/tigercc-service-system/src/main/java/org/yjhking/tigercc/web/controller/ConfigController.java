@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.plugins.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.Config;
 import org.yjhking.tigercc.query.ConfigQuery;
@@ -12,12 +11,14 @@ import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
 import org.yjhking.tigercc.service.IConfigService;
 
+import javax.annotation.Resource;
+
 @RestController
 @RequestMapping("/config")
 @Api(value = "ConfigController", description = "配置")
 public class ConfigController {
     
-    @Autowired
+    @Resource
     public IConfigService configService;
     
     /**

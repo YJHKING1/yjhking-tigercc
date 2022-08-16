@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.yjhking.tigercc.mapper.AlipayInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.yjhking.tigercc.domain.AlipayInfo">
+        <id column="id" property="id" />
+        <result column="merchant_private_key" property="merchantPrivateKey" />
+        <result column="app_id" property="appId" />
+        <result column="alipay_public_key" property="alipayPublicKey" />
+        <result column="crate_time" property="crateTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="protocol" property="protocol" />
+        <result column="gateway_host" property="gatewayHost" />
+        <result column="sign_type" property="signType" />
+        <result column="notify_url" property="notifyUrl" />
+        <result column="return_url" property="returnUrl" />
+    </resultMap>
+
+</mapper>

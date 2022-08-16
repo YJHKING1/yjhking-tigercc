@@ -1,16 +1,16 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.MessageSms;
 import org.yjhking.tigercc.mapper.MessageSmsMapper;
 import org.yjhking.tigercc.service.IMessageSmsService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author YJH
@@ -27,6 +27,7 @@ public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, Message
         messageSms.setContent(smsMessage);
         messageSms.setSendTime(new Date());
         messageSms.setPhone(mobile);
+        // todo ip保存
         super.insert(messageSms);
     }
 }
