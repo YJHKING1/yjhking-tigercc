@@ -1,11 +1,13 @@
 package org.yjhking.tigercc.service;
 
-import org.yjhking.tigercc.domain.MessageSms;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.domain.MessageSms;
+import org.yjhking.tigercc.dto.BlackDto;
+import org.yjhking.tigercc.result.JsonResult;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author YJH
@@ -14,4 +16,6 @@ import com.baomidou.mybatisplus.service.IService;
 public interface IMessageSmsService extends IService<MessageSms> {
     
     void saveSmsMessage(String registrationVerificationCode, String smsMessage, String mobile);
+    
+    JsonResult black(BlackDto dto);
 }

@@ -3,6 +3,7 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.MessageSms;
+import org.yjhking.tigercc.dto.BlackDto;
 import org.yjhking.tigercc.query.MessageSmsQuery;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
@@ -65,5 +66,10 @@ public class MessageSmsController {
         Page<MessageSms> page = new Page<MessageSms>(query.getPage(), query.getRows());
         page = messageSmsService.selectPage(page);
         return JsonResult.success(new PageList<MessageSms>(page.getTotal(), page.getRecords()));
+    }
+    
+    @PostMapping("/black")
+    public JsonResult black(@RequestBody BlackDto dto) {
+        return messageSmsService.black(dto);
     }
 }

@@ -22,6 +22,7 @@ public enum GlobalErrorCode {
     SERVICE_PARAM_IS_FALSE("10004", "参数为假！"),
     SERVICE_PARAM_IS_TRUE("10005", "参数为真！"),
     SERVICE_PARAM_IS_NOT_EQUALS("10006", "字符串不一致！"),
+    SERVICE_IP_ERROR("10007", "IP异常！"),
     
     // system服务异常：200xx
     SYSTEM_ERROR("20000", "系统服务异常！"),
@@ -42,7 +43,8 @@ public enum GlobalErrorCode {
     COMMON_PHONE_VERIFICATION_ERROR("50004", "手机验证码错误！"),
     COMMON_IMG_VERIFICATION_NULL("50005", "图片验证码为空！"),
     COMMON_IMG_VERIFICATION_ERROR("50006", "图片验证码错误！"),
-    COMMON_IMG_VERIFICATION_OVERDUE("50007", "图片验证码过期！");
+    COMMON_IMG_VERIFICATION_OVERDUE("50007", "图片验证码过期！"),
+    COMMON_VERIFICATION_BLACK("50008", "您已被拉黑！");
     
     // 异常码
     private String code;

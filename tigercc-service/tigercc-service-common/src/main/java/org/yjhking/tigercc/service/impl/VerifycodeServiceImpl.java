@@ -4,15 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.TitleConstants;
 import org.yjhking.tigercc.constants.VerifyCodeConstants;
+import org.yjhking.tigercc.domain.MessageBlack;
 import org.yjhking.tigercc.dto.IMGVerifyCodeProperties;
 import org.yjhking.tigercc.dto.MobileCodeDto;
 import org.yjhking.tigercc.dto.SMSVerifyCodeProperties;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.exception.GlobalCustomException;
 import org.yjhking.tigercc.result.JsonResult;
+import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
 import org.yjhking.tigercc.service.IVerifycodeService;
 import org.yjhking.tigercc.utils.StrUtils;
@@ -20,6 +24,7 @@ import org.yjhking.tigercc.utils.VerificationUtils;
 import org.yjhking.tigercc.utils.VerifyCodeUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,6 +53,11 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
      */
     @Resource
     private IMessageSmsService messageSmsService;
+    /**
+     * 黑名单
+     */
+    @Resource
+    private IMessageBlackService messageBlackService;
     
     @Override
     public JsonResult sendSmsCode(MobileCodeDto mobileCodeDto) {
@@ -83,6 +93,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
      * @param mobileCodeDto 用户输入的验证码
      */
     private void imgVerification(MobileCodeDto mobileCodeDto) {
+        blackVerification(mobileCodeDto);
         String imageCodeKey = redisTemplate.opsForValue().get(mobileCodeDto.getImageCodeKey());
         // 判断图片验证码是否过期
         VerificationUtils.isNotEmpty(imageCodeKey, GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
@@ -119,6 +130,22 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
                 code + VerifyCodeConstants.REDIS_VERIFY + System.currentTimeMillis()
                 , smsProperties.getExpire(), TimeUnit.MINUTES);
         return code;
+    }
+    
+    /**
+     * 黑名单校验
+     *
+     * @param mobileCodeDto 用户输入的验证码
+     */
+    private void blackVerification(MobileCodeDto mobileCodeDto) {
+        // 获取ip
+        ServletRequestAttributes requestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        VerificationUtils.isNotNull(requestAttributes, GlobalErrorCode.SERVICE_IP_ERROR);
+        // ip与手机校验
+        List<MessageBlack> messageBlacks = messageBlackService
+                .selectBlack(requestAttributes.getRequest().getRemoteAddr(), mobileCodeDto.getMobile());
+        if (messageBlacks.size() > 0) throw new GlobalCustomException(GlobalErrorCode.COMMON_VERIFICATION_BLACK);
     }
     
     /**

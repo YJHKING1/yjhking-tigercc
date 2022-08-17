@@ -38,4 +38,9 @@ public class VerifyCodeConstants {
      * 手机
      */
     public static final String PHONE = "phone";
+    /**
+     * ip
+     */
+    public static final String IP = "ip";
+    public static final String USER_ID = "user_id";
 }

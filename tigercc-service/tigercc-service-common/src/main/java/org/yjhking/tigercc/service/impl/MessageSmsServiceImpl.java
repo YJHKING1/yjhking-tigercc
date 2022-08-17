@@ -1,12 +1,23 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.yjhking.tigercc.constants.NumberConstants;
+import org.yjhking.tigercc.constants.VerifyCodeConstants;
 import org.yjhking.tigercc.domain.MessageSms;
+import org.yjhking.tigercc.dto.BlackDto;
 import org.yjhking.tigercc.mapper.MessageSmsMapper;
+import org.yjhking.tigercc.result.JsonResult;
+import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
+import org.yjhking.tigercc.utils.VerificationUtils;
 
+import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -18,6 +29,8 @@ import java.util.Date;
  */
 @Service
 public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, MessageSms> implements IMessageSmsService {
+    @Resource
+    private IMessageBlackService messageBlackService;
     
     @Override
     public void saveSmsMessage(String registrationVerificationCode, String smsMessage, String mobile) {
@@ -27,7 +40,23 @@ public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, Message
         messageSms.setContent(smsMessage);
         messageSms.setSendTime(new Date());
         messageSms.setPhone(mobile);
-        // todo ip保存
+        // ip保存
+        ServletRequestAttributes requestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (VerificationUtils.objectVerification(requestAttributes))
+            messageSms.setIp(requestAttributes.getRequest().getRemoteAddr());
         super.insert(messageSms);
+    }
+    
+    @Override
+    public JsonResult black(BlackDto dto) {
+        VerificationUtils.isNotNull(dto);
+        EntityWrapper<MessageSms> query = new EntityWrapper<>();
+        query.eq(VerifyCodeConstants.PHONE, dto.getPhone());
+        List<MessageSms> messageSmsList = selectList(query);
+        // 最新的数据
+        MessageSms messageSms = messageSmsList.get(messageSmsList.size() - NumberConstants.ONE);
+        messageBlackService.save(messageSms, dto);
+        return JsonResult.success();
     }
 }

@@ -4,6 +4,7 @@ import org.yjhking.tigercc.constants.RegularConstants;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.exception.GlobalCustomException;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +31,16 @@ public class VerificationUtils {
      */
     public static boolean objectVerification(Object obj) {
         return obj != null;
+    }
+    
+    /**
+     * list集合非空校验
+     *
+     * @param list list集合
+     * @return true:非空 false:空
+     */
+    public static boolean listVerification(List list) {
+        return list != null && list.size() > 0;
     }
     
     /**
