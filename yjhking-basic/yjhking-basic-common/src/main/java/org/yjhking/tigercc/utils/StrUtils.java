@@ -1,8 +1,9 @@
 package org.yjhking.tigercc.utils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * 生成随机字符串工具类
@@ -34,13 +35,7 @@ public class StrUtils {
     public static List<Long> splitStr2LongArr(String str) {
         String[] strings = splitStr2StrArr(str, ",");
         if (strings == null) return null;
-        
-        List<Long> result = new ArrayList<>();
-        for (String string : strings) {
-            result.add(Long.parseLong(string));
-        }
-        
-        return result;
+        return Arrays.stream(strings).map(Long::parseLong).collect(Collectors.toList());
     }
     
     /**
@@ -53,13 +48,7 @@ public class StrUtils {
     public static List<Long> splitStr2LongArr(String str, String split) {
         String[] strings = splitStr2StrArr(str, split);
         if (strings == null) return null;
-        
-        List<Long> result = new ArrayList<>();
-        for (String string : strings) {
-            result.add(Long.parseLong(string));
-        }
-        
-        return result;
+        return Arrays.stream(strings).map(Long::parseLong).collect(Collectors.toList());
     }
     
     /**
@@ -105,13 +94,11 @@ public class StrUtils {
      */
     public static String convertPropertiesToHtml(String properties) {
         //1:容量:6:32GB_4:样式:12:塑料壳
-        StringBuilder sBuilder = new StringBuilder();
+        String sBuilder;
         String[] propArr = properties.split("_");
-        for (String props : propArr) {
-            String[] valueArr = props.split(":");
-            sBuilder.append(valueArr[1]).append(":").append(valueArr[3]).append("<br>");
-        }
-        return sBuilder.toString();
+        sBuilder = Arrays.stream(propArr).map(props -> props.split(":"))
+                .map(valueArr -> valueArr[1] + ":" + valueArr[3] + "<br>").collect(Collectors.joining());
+        return sBuilder;
     }
     
 }

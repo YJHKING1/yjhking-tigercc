@@ -18,4 +18,12 @@ public class NumberConstants {
      * 1
      */
     public static final Integer ONE = 1;
+    /**
+     * 2
+     */
+    public static final Integer TWO = 2;
+    /**
+     * 0L
+     */
+    public static final Long ZERO_LONG = 0L;
 }

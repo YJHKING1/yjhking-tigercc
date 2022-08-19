@@ -1,10 +1,10 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.UserAddress;
 import org.yjhking.tigercc.mapper.UserAddressMapper;
 import org.yjhking.tigercc.service.IUserAddressService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>

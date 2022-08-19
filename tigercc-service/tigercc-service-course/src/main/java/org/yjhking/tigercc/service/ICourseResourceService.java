@@ -2,6 +2,7 @@ package org.yjhking.tigercc.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.CourseResource;
+import org.yjhking.tigercc.dto.CourseDto;
 
 /**
  * <p>
@@ -12,5 +13,6 @@ import org.yjhking.tigercc.domain.CourseResource;
  * @since 2022-08-16
  */
 public interface ICourseResourceService extends IService<CourseResource> {
-
+    
+    boolean save(CourseDto dto);
 }

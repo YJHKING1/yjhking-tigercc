@@ -1,16 +1,17 @@
 package org.yjhking.tigercc.domain;
 
-import com.baomidou.mybatisplus.enums.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author YJH
@@ -18,9 +19,9 @@ import java.io.Serializable;
  */
 @TableName("t_message_sms")
 public class MessageSms extends Model<MessageSms> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String title;
@@ -31,79 +32,79 @@ public class MessageSms extends Model<MessageSms> {
     @TableField("user_id")
     private Long userId;
     private String phone;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public String getTitle() {
         return title;
     }
-
+    
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public String getContent() {
         return content;
     }
-
+    
     public void setContent(String content) {
         this.content = content;
     }
-
+    
     public String getIp() {
         return ip;
     }
-
+    
     public void setIp(String ip) {
         this.ip = ip;
     }
-
+    
     public Date getSendTime() {
         return sendTime;
     }
-
+    
     public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
     }
-
+    
     public Long getUserId() {
         return userId;
     }
-
+    
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
+    
     public String getPhone() {
         return phone;
     }
-
+    
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "MessageSms{" +
-        ", id=" + id +
-        ", title=" + title +
-        ", content=" + content +
-        ", ip=" + ip +
-        ", sendTime=" + sendTime +
-        ", userId=" + userId +
-        ", phone=" + phone +
-        "}";
+                ", id=" + id +
+                ", title=" + title +
+                ", content=" + content +
+                ", ip=" + ip +
+                ", sendTime=" + sendTime +
+                ", userId=" + userId +
+                ", phone=" + phone +
+                "}";
     }
 }

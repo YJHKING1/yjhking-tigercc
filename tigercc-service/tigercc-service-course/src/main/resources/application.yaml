@@ -26,3 +26,9 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+file:
+  alicloud:
+    bucket-name: tigercc #上传空间bucket
+    access-key: LTAI5tJYNf343fNHhNrQ4eCA #你的key
+    secret-key: ZPsCWRdRtKGNnZtkL37OKU6pMcImaI #你的秘钥
+    endpoint: oss-cn-chengdu.aliyuncs.com  #上传端点

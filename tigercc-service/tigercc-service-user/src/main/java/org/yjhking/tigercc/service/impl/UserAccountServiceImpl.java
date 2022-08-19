@@ -1,18 +1,18 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.domain.UserAccount;
 import org.yjhking.tigercc.mapper.UserAccountMapper;
 import org.yjhking.tigercc.service.IUserAccountService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author YJH

@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.yjhking.tigercc.mapper.CourseOrderItemMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="org.yjhking.tigercc.domain.CourseOrderItem">
-        <id column="id" property="id" />
-        <result column="order_id" property="orderId" />
-        <result column="amount" property="amount" />
-        <result column="count" property="count" />
-        <result column="subtotal_amount" property="subtotalAmount" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="course_id" property="courseId" />
-        <result column="course_name" property="courseName" />
-        <result column="course_pic" property="coursePic" />
-        <result column="version" property="version" />
-        <result column="order_no" property="orderNo" />
-        <result column="kill_course_id" property="killCourseId" />
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="amount" property="amount"/>
+        <result column="count" property="count"/>
+        <result column="subtotal_amount" property="subtotalAmount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="course_id" property="courseId"/>
+        <result column="course_name" property="courseName"/>
+        <result column="course_pic" property="coursePic"/>
+        <result column="version" property="version"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="kill_course_id" property="killCourseId"/>
     </resultMap>
-
 </mapper>

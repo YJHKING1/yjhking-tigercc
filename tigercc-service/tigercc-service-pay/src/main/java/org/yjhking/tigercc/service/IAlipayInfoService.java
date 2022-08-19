@@ -1,11 +1,11 @@
 package org.yjhking.tigercc.service;
 
-import org.yjhking.tigercc.domain.AlipayInfo;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.domain.AlipayInfo;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author YJH

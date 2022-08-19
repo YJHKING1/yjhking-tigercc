@@ -1,13 +1,14 @@
 package org.yjhking.tigercc.domain;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author YJH
@@ -15,9 +16,9 @@ import java.io.Serializable;
  */
 @TableName("t_course_summary")
 public class CourseSummary extends Model<CourseSummary> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     private Long id;
     /**
      * 销量
@@ -34,52 +35,52 @@ public class CourseSummary extends Model<CourseSummary> {
      */
     @TableField("comment_count")
     private Integer commentCount;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public Integer getSaleCount() {
         return saleCount;
     }
-
+    
     public void setSaleCount(Integer saleCount) {
         this.saleCount = saleCount;
     }
-
+    
     public Integer getViewCount() {
         return viewCount;
     }
-
+    
     public void setViewCount(Integer viewCount) {
         this.viewCount = viewCount;
     }
-
+    
     public Integer getCommentCount() {
         return commentCount;
     }
-
+    
     public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "CourseSummary{" +
-        ", id=" + id +
-        ", saleCount=" + saleCount +
-        ", viewCount=" + viewCount +
-        ", commentCount=" + commentCount +
-        "}";
+                ", id=" + id +
+                ", saleCount=" + saleCount +
+                ", viewCount=" + viewCount +
+                ", commentCount=" + commentCount +
+                "}";
     }
 }

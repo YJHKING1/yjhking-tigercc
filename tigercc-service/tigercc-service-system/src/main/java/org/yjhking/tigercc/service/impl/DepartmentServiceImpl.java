@@ -1,14 +1,14 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.Department;
 import org.yjhking.tigercc.mapper.DepartmentMapper;
 import org.yjhking.tigercc.service.IDepartmentService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author YJH

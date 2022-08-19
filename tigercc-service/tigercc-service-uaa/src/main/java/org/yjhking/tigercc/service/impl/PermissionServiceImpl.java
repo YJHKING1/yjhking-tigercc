@@ -1,10 +1,10 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.Permission;
 import org.yjhking.tigercc.mapper.PermissionMapper;
 import org.yjhking.tigercc.service.IPermissionService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>

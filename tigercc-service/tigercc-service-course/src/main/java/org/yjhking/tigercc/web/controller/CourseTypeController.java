@@ -72,6 +72,6 @@ public class CourseTypeController {
      */
     @GetMapping("/treeData")
     public JsonResult treeData() {
-        return courseTypeService.treeData();
+        return JsonResult.success(courseTypeService.treeData());
     }
 }

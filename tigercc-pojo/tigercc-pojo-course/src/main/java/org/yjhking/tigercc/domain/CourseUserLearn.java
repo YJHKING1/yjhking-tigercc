@@ -1,16 +1,17 @@
 package org.yjhking.tigercc.domain;
 
-import com.baomidou.mybatisplus.enums.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author YJH
@@ -18,9 +19,9 @@ import java.io.Serializable;
  */
 @TableName("t_course_user_learn")
 public class CourseUserLearn extends Model<CourseUserLearn> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     @TableField("login_id")
@@ -39,88 +40,88 @@ public class CourseUserLearn extends Model<CourseUserLearn> {
     private String courseOrderNo;
     @TableField("create_time")
     private Date createTime;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public Long getLoginId() {
         return loginId;
     }
-
+    
     public void setLoginId(Long loginId) {
         this.loginId = loginId;
     }
-
+    
     public Date getStartTime() {
         return startTime;
     }
-
+    
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
-
+    
     public Date getEndTime() {
         return endTime;
     }
-
+    
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
-
+    
     public Integer getState() {
         return state;
     }
-
+    
     public void setState(Integer state) {
         this.state = state;
     }
-
+    
     public Long getCourseId() {
         return courseId;
     }
-
+    
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
-
+    
     public String getCourseOrderNo() {
         return courseOrderNo;
     }
-
+    
     public void setCourseOrderNo(String courseOrderNo) {
         this.courseOrderNo = courseOrderNo;
     }
-
+    
     public Date getCreateTime() {
         return createTime;
     }
-
+    
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "CourseUserLearn{" +
-        ", id=" + id +
-        ", loginId=" + loginId +
-        ", startTime=" + startTime +
-        ", endTime=" + endTime +
-        ", state=" + state +
-        ", courseId=" + courseId +
-        ", courseOrderNo=" + courseOrderNo +
-        ", createTime=" + createTime +
-        "}";
+                ", id=" + id +
+                ", loginId=" + loginId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", state=" + state +
+                ", courseId=" + courseId +
+                ", courseOrderNo=" + courseOrderNo +
+                ", createTime=" + createTime +
+                "}";
     }
 }

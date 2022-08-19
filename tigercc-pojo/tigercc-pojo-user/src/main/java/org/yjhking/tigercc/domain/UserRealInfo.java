@@ -1,10 +1,11 @@
 package org.yjhking.tigercc.domain;
 
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
 import java.io.Serializable;
 
 /**
@@ -17,9 +18,9 @@ import java.io.Serializable;
  */
 @TableName("t_user_real_info")
 public class UserRealInfo extends Model<UserRealInfo> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     @TableField("create_time")
@@ -79,142 +80,142 @@ public class UserRealInfo extends Model<UserRealInfo> {
      * 审核备注
      */
     private String remark;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public Long getCreateTime() {
         return createTime;
     }
-
+    
     public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
-
+    
     public Long getUpdateTime() {
         return updateTime;
     }
-
+    
     public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
-
+    
     public Long getUserId() {
         return userId;
     }
-
+    
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
+    
     public String getRealName() {
         return realName;
     }
-
+    
     public void setRealName(String realName) {
         this.realName = realName;
     }
-
+    
     public String getIdCardNo() {
         return idCardNo;
     }
-
+    
     public void setIdCardNo(String idCardNo) {
         this.idCardNo = idCardNo;
     }
-
+    
     public String getIdCardFront() {
         return idCardFront;
     }
-
+    
     public void setIdCardFront(String idCardFront) {
         this.idCardFront = idCardFront;
     }
-
+    
     public String getIdCardBack() {
         return idCardBack;
     }
-
+    
     public void setIdCardBack(String idCardBack) {
         this.idCardBack = idCardBack;
     }
-
+    
     public String getIdCardHand() {
         return idCardHand;
     }
-
+    
     public void setIdCardHand(String idCardHand) {
         this.idCardHand = idCardHand;
     }
-
+    
     public Integer getState() {
         return state;
     }
-
+    
     public void setState(Integer state) {
         this.state = state;
     }
-
+    
     public Long getApplyTime() {
         return applyTime;
     }
-
+    
     public void setApplyTime(Long applyTime) {
         this.applyTime = applyTime;
     }
-
+    
     public Long getAuditTime() {
         return auditTime;
     }
-
+    
     public void setAuditTime(Long auditTime) {
         this.auditTime = auditTime;
     }
-
+    
     public String getAuditUser() {
         return auditUser;
     }
-
+    
     public void setAuditUser(String auditUser) {
         this.auditUser = auditUser;
     }
-
+    
     public String getRemark() {
         return remark;
     }
-
+    
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "UserRealInfo{" +
-        ", id=" + id +
-        ", createTime=" + createTime +
-        ", updateTime=" + updateTime +
-        ", userId=" + userId +
-        ", realName=" + realName +
-        ", idCardNo=" + idCardNo +
-        ", idCardFront=" + idCardFront +
-        ", idCardBack=" + idCardBack +
-        ", idCardHand=" + idCardHand +
-        ", state=" + state +
-        ", applyTime=" + applyTime +
-        ", auditTime=" + auditTime +
-        ", auditUser=" + auditUser +
-        ", remark=" + remark +
-        "}";
+                ", id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", userId=" + userId +
+                ", realName=" + realName +
+                ", idCardNo=" + idCardNo +
+                ", idCardFront=" + idCardFront +
+                ", idCardBack=" + idCardBack +
+                ", idCardHand=" + idCardHand +
+                ", state=" + state +
+                ", applyTime=" + applyTime +
+                ", auditTime=" + auditTime +
+                ", auditUser=" + auditUser +
+                ", remark=" + remark +
+                "}";
     }
 }

@@ -1,8 +1,8 @@
 package org.yjhking.tigercc.service;
 
+import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.domain.UserBaseInfo;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>

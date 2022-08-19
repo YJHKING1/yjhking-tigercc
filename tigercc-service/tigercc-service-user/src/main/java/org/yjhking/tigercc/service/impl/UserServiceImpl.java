@@ -2,12 +2,11 @@ package org.yjhking.tigercc.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.yjhking.tigercc.constants.VerifyCodeConstants;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.dto.RegisterDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
@@ -18,6 +17,8 @@ import org.yjhking.tigercc.service.IUserAccountService;
 import org.yjhking.tigercc.service.IUserBaseInfoService;
 import org.yjhking.tigercc.service.IUserService;
 import org.yjhking.tigercc.utils.BitStatesUtils;
+import org.yjhking.tigercc.utils.ObjectMapperUtils;
+import org.yjhking.tigercc.utils.RedisUtils;
 import org.yjhking.tigercc.utils.VerificationUtils;
 
 import javax.annotation.Resource;
@@ -56,16 +57,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 保存user注册信息
         User user = registerDto2User(dto.getMobile());
         // 设置loginId
-        // todo 封装ObjectMapper工具类
-        ObjectMapper objectMapper = new ObjectMapper();
-        user.setLoginId(objectMapper.convertValue(uaaResult.getData(), Long.class));
+        user.setLoginId(ObjectMapperUtils.convertValue(uaaResult.getData(), Long.class));
         insert(user);
         // 保存user_base_info基本信息
         userBaseInfoService.save(user);
         // 保存user_account账户
         userAccountService.save(user);
         // 删除Redis中的手机验证码
-        redisTemplate.delete(VerifyCodeConstants.REGISTER_CODE_PREFIX + dto.getMobile());
+        redisTemplate.delete(RedisConstants.REGISTER_CODE_PREFIX + dto.getMobile());
         return JsonResult.success();
     }
     
@@ -76,18 +75,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     private void phoneVerification(RegisterDto dto) {
         String phoneCode = redisTemplate.opsForValue()
-                .get(VerifyCodeConstants.REGISTER_CODE_PREFIX + dto.getMobile());
+                .get(RedisConstants.REGISTER_CODE_PREFIX + dto.getMobile());
         // 过期校验
         VerificationUtils.isNotEmpty(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
         // 正确校验
-        // todo 封装redis方法
-        VerificationUtils.isEqualsTrim(phoneCode
-                        .split(VerifyCodeConstants.REDIS_VERIFY)[VerifyCodeConstants.REDIS_VERIFY_FIRST]
+        VerificationUtils.isEqualsTrim(RedisUtils.getSmsCode(phoneCode)
                 , dto.getSmsCode(), GlobalErrorCode.COMMON_PHONE_VERIFICATION_ERROR);
         // 手机是否已经被注册校验
-        EntityWrapper<User> query = new EntityWrapper<>();
-        query.eq(VerifyCodeConstants.PHONE, dto.getMobile());
-        VerificationUtils.isNull(selectOne(query), GlobalErrorCode.USER_PHONE_REPEAT_ERROR);
+        VerificationUtils.isNull(selectOne(new EntityWrapper<User>().eq(RedisConstants.PHONE, dto.getMobile()))
+                , GlobalErrorCode.USER_PHONE_REPEAT_ERROR);
     }
     
     /**

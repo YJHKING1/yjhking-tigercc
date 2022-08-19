@@ -23,6 +23,8 @@ public enum GlobalErrorCode {
     SERVICE_PARAM_IS_TRUE("10005", "参数为真！"),
     SERVICE_PARAM_IS_NOT_EQUALS("10006", "字符串不一致！"),
     SERVICE_IP_ERROR("10007", "IP异常！"),
+    SERVICE_LIST_IS_NOT_NULL("10008", "集合不为空！"),
+    SERVICE_LIST_IS_NULL("10009", "集合为空！"),
     
     // system服务异常：200xx
     SYSTEM_ERROR("20000", "系统服务异常！"),
@@ -35,6 +37,7 @@ public enum GlobalErrorCode {
     USER_USERNAME_ERROR("40001", "用户名称不合法！"),
     USER_PHONE_REPEAT_ERROR("40002", "手机已注册！"),
     USER_PHONE_FORMAT_ERROR("40003", "手机格式错误！"),
+    USER_VERIFICATION_BLACK("40004", "您已被拉黑！"),
     
     // common服务异常：500xx
     COMMON_VERIFICATION_ERROR("50001", "验证码创建失败！"),
@@ -44,7 +47,13 @@ public enum GlobalErrorCode {
     COMMON_IMG_VERIFICATION_NULL("50005", "图片验证码为空！"),
     COMMON_IMG_VERIFICATION_ERROR("50006", "图片验证码错误！"),
     COMMON_IMG_VERIFICATION_OVERDUE("50007", "图片验证码过期！"),
-    COMMON_VERIFICATION_BLACK("50008", "您已被拉黑！");
+    COMMON_VERIFICATION_BLACK("50008", "该手机号或IP已被拉黑，请勿重复操作！"),
+    
+    // course服务异常：600xx
+    COURSE_ERROR("60000", "课程服务异常！"),
+    COURSE_TIME_ERROR("60001", "课程时间错误！"),
+    COURSE_NAME_REPEAT("60002", "课程名重复！"),
+    COURSE_PRICE_IS_NULL("60002", "课程价格不能为空！");
     
     // 异常码
     private String code;

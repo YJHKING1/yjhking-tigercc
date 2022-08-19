@@ -1,7 +1,7 @@
 package org.yjhking.tigercc.mapper;
 
-import org.yjhking.tigercc.domain.OperationLog;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.yjhking.tigercc.domain.OperationLog;
 
 /**
  * <p>

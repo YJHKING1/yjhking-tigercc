@@ -2,18 +2,22 @@ package org.yjhking.tigercc.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
-import org.yjhking.tigercc.constants.VerifyCodeConstants;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.domain.MessageBlack;
 import org.yjhking.tigercc.domain.MessageSms;
 import org.yjhking.tigercc.dto.BlackDto;
+import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.MessageBlackMapper;
 import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
 import org.yjhking.tigercc.utils.VerificationUtils;
 
 import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +36,8 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
     
     @Override
     public void save(MessageSms messageSms, BlackDto dto) {
+        // 重复添加校验
+        repeatCheck(messageSms.getIp(), dto.getPhone());
         MessageBlack messageBlack = new MessageBlack();
         messageBlack.setBlackTime(new Date());
         messageBlack.setIp(messageSms.getIp());
@@ -41,22 +47,34 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
         insert(messageBlack);
     }
     
+    /**
+     * 重复添加校验
+     *
+     * @param ip    ip
+     * @param phone 手机号
+     */
+    private void repeatCheck(String ip, String phone) {
+        List<MessageBlack> list = selectList(new EntityWrapper<MessageBlack>().eq(RedisConstants.IP, ip)
+                .or().eq(RedisConstants.PHONE, phone));
+        VerificationUtils.listIsNull(list, GlobalErrorCode.COMMON_VERIFICATION_BLACK);
+    }
+    
     @Override
+    // 添加redis缓存
+    @Cacheable(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
     public List<MessageBlack> selectBlack(String ip, String phone) {
         // 查userId
-        EntityWrapper<MessageSms> smsQuery = new EntityWrapper<>();
-        smsQuery.eq(VerifyCodeConstants.PHONE, phone);
-        List<MessageSms> messageSmsList = messageSmsService.selectList(smsQuery);
+        List<MessageSms> messageSmsList = messageSmsService
+                .selectList(new EntityWrapper<MessageSms>().eq(RedisConstants.PHONE, phone));
         MessageSms messageSms = null;
-        if (VerificationUtils.listVerification(messageSmsList)) {
+        if (VerificationUtils.listVerification(messageSmsList))
             messageSms = messageSmsList.get(messageSmsList.size() - NumberConstants.ONE);
-        }
         EntityWrapper<MessageBlack> query = new EntityWrapper<>();
         // 根据ip或手机及userId查找数据库
-        if (VerificationUtils.objectVerification(messageSms)) query.eq(VerifyCodeConstants.IP, ip)
-                .or().eq(VerifyCodeConstants.PHONE, phone).or().eq(VerifyCodeConstants.USER_ID, messageSms.getUserId());
+        if (VerificationUtils.objectVerification(messageSms)) query.eq(RedisConstants.IP, ip)
+                .or().eq(RedisConstants.PHONE, phone).or().eq(RedisConstants.USER_ID, messageSms.getUserId());
             // 根据ip或手机查找数据库
-        else query.eq(VerifyCodeConstants.IP, ip).or().eq(VerifyCodeConstants.PHONE, phone);
+        else query.eq(RedisConstants.IP, ip).or().eq(RedisConstants.PHONE, phone);
         return selectList(query);
     }
     
@@ -77,5 +95,24 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
         messageBlack.setReason(dto.getMsg());
         messageBlack.setBlackTime(new Date());
         updateById(messageBlack);
+    }
+    
+    @Override
+    // 删除redis缓存
+    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    public boolean insert(MessageBlack entity) {
+        return super.insert(entity);
+    }
+    
+    @Override
+    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    public boolean deleteById(Serializable id) {
+        return super.deleteById(id);
+    }
+    
+    @Override
+    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    public boolean updateById(MessageBlack entity) {
+        return super.updateById(entity);
     }
 }

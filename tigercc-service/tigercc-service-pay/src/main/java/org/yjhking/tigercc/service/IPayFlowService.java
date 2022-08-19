@@ -1,11 +1,11 @@
 package org.yjhking.tigercc.service;
 
-import org.yjhking.tigercc.domain.PayFlow;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.domain.PayFlow;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author YJH

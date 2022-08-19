@@ -3,12 +3,14 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.Course;
+import org.yjhking.tigercc.dto.CourseDto;
 import org.yjhking.tigercc.query.CourseQuery;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
 import org.yjhking.tigercc.service.ICourseService;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/course")
@@ -21,12 +23,8 @@ public class CourseController {
      * 保存和修改公用的
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public JsonResult saveOrUpdate(@RequestBody Course course) {
-        if (course.getId() != null) {
-            courseService.updateById(course);
-        } else {
-            courseService.insert(course);
-        }
+    public JsonResult saveOrUpdate(@RequestBody @Valid CourseDto dto) {
+        courseService.save(dto);
         return JsonResult.success();
     }
     

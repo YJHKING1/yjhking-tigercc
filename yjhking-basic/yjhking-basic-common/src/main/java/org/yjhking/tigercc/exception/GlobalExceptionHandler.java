@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
      * 全局参数异常
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public JsonResult methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
+    public JsonResult methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         e.printStackTrace();
         // 打印日志
         log.error("发生方法参数校验异常，异常信息为：" + e.getMessage());

@@ -1,11 +1,11 @@
 package org.yjhking.tigercc.mapper;
 
-import org.yjhking.tigercc.domain.MediaFile;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.yjhking.tigercc.domain.MediaFile;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author YJH

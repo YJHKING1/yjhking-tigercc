@@ -1,7 +1,7 @@
 package org.yjhking.tigercc.service;
 
-import org.yjhking.tigercc.domain.User;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.dto.RegisterDto;
 import org.yjhking.tigercc.result.JsonResult;
 

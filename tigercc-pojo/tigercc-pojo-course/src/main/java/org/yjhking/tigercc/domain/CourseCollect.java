@@ -1,10 +1,11 @@
 package org.yjhking.tigercc.domain;
 
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
 import java.io.Serializable;
 
 /**
@@ -17,9 +18,9 @@ import java.io.Serializable;
  */
 @TableName("t_course_collect")
 public class CourseCollect extends Model<CourseCollect> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     @TableField("create_time")
@@ -34,52 +35,52 @@ public class CourseCollect extends Model<CourseCollect> {
      */
     @TableField("course_id")
     private Long courseId;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public Long getCreateTime() {
         return createTime;
     }
-
+    
     public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
-
+    
     public Long getUserId() {
         return userId;
     }
-
+    
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
+    
     public Long getCourseId() {
         return courseId;
     }
-
+    
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "CourseCollect{" +
-        ", id=" + id +
-        ", createTime=" + createTime +
-        ", userId=" + userId +
-        ", courseId=" + courseId +
-        "}";
+                ", id=" + id +
+                ", createTime=" + createTime +
+                ", userId=" + userId +
+                ", courseId=" + courseId +
+                "}";
     }
 }

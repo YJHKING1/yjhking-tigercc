@@ -1,17 +1,18 @@
 package org.yjhking.tigercc.domain;
 
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author YJH
@@ -19,9 +20,9 @@ import java.io.Serializable;
  */
 @TableName("t_account_flow")
 public class AccountFlow extends Model<AccountFlow> {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**
@@ -46,79 +47,79 @@ public class AccountFlow extends Model<AccountFlow> {
     private Integer businessType;
     @TableField("business_name")
     private String businessName;
-
-
+    
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public BigDecimal getAmount() {
         return amount;
     }
-
+    
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
+    
     public Long getAccountId() {
         return accountId;
     }
-
+    
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
-
+    
     public String getRemark() {
         return remark;
     }
-
+    
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     public Date getCreateTime() {
         return createTime;
     }
-
+    
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
+    
     public Integer getBusinessType() {
         return businessType;
     }
-
+    
     public void setBusinessType(Integer businessType) {
         this.businessType = businessType;
     }
-
+    
     public String getBusinessName() {
         return businessName;
     }
-
+    
     public void setBusinessName(String businessName) {
         this.businessName = businessName;
     }
-
+    
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
+    
     @Override
     public String toString() {
         return "AccountFlow{" +
-        ", id=" + id +
-        ", amount=" + amount +
-        ", accountId=" + accountId +
-        ", remark=" + remark +
-        ", createTime=" + createTime +
-        ", businessType=" + businessType +
-        ", businessName=" + businessName +
-        "}";
+                ", id=" + id +
+                ", amount=" + amount +
+                ", accountId=" + accountId +
+                ", remark=" + remark +
+                ", createTime=" + createTime +
+                ", businessType=" + businessType +
+                ", businessName=" + businessName +
+                "}";
     }
 }

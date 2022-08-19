@@ -1,12 +1,12 @@
 package org.yjhking.tigercc.service;
 
+import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.User;
 import org.yjhking.tigercc.domain.UserAccount;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author YJH

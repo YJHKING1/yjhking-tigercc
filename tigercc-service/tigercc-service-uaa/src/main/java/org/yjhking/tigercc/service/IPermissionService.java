@@ -1,7 +1,7 @@
 package org.yjhking.tigercc.service;
 
-import org.yjhking.tigercc.domain.Permission;
 import com.baomidou.mybatisplus.service.IService;
+import org.yjhking.tigercc.domain.Permission;
 
 /**
  * <p>

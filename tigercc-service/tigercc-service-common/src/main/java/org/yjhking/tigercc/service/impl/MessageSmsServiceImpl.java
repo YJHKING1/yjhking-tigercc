@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.yjhking.tigercc.constants.NumberConstants;
-import org.yjhking.tigercc.constants.VerifyCodeConstants;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.domain.MessageSms;
 import org.yjhking.tigercc.dto.BlackDto;
 import org.yjhking.tigercc.mapper.MessageSmsMapper;
@@ -51,9 +51,8 @@ public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, Message
     @Override
     public JsonResult black(BlackDto dto) {
         VerificationUtils.isNotNull(dto);
-        EntityWrapper<MessageSms> query = new EntityWrapper<>();
-        query.eq(VerifyCodeConstants.PHONE, dto.getPhone());
-        List<MessageSms> messageSmsList = selectList(query);
+        List<MessageSms> messageSmsList = selectList(new EntityWrapper<MessageSms>()
+                .eq(RedisConstants.PHONE, dto.getPhone()));
         // 最新的数据
         MessageSms messageSms = messageSmsList.get(messageSmsList.size() - NumberConstants.ONE);
         messageBlackService.save(messageSms, dto);

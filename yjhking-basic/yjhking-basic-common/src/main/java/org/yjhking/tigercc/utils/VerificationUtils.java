@@ -4,6 +4,7 @@ import org.yjhking.tigercc.constants.RegularConstants;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.exception.GlobalCustomException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,7 @@ public class VerificationUtils {
      * @param list list集合
      * @return true:非空 false:空
      */
-    public static boolean listVerification(List list) {
+    public static <T> boolean listVerification(List<T> list) {
         return list != null && list.size() > 0;
     }
     
@@ -134,6 +135,25 @@ public class VerificationUtils {
         isNotEmpty(s2);
         if (!s1.trim().equalsIgnoreCase(s2.trim()))
             throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
+    }
+    
+    /**
+     * 断言集合为空
+     *
+     * @param list 集合
+     */
+    public static <T> void listIsNull(List<T> list) {
+        if (list == null) return;
+        else if (list.size() != 0) throwGlobalCustomException(GlobalErrorCode.SERVICE_LIST_IS_NOT_NULL);
+    }
+    
+    /**
+     * 断言集合不为空
+     *
+     * @param list 集合
+     */
+    public static <T> void listIsNotNull(List<T> list) {
+        if (list == null || list.size() == 0) throwGlobalCustomException(GlobalErrorCode.SERVICE_LIST_IS_NULL);
     }
     
     /**
@@ -234,5 +254,35 @@ public class VerificationUtils {
         isNotEmpty(s1);
         isNotEmpty(s2);
         if (!s1.trim().equalsIgnoreCase(s2.trim())) throwGlobalCustomException(errorCode);
+    }
+    
+    /**
+     * 断言集合为空
+     *
+     * @param list 集合
+     */
+    public static <T> void listIsNull(List<T> list, GlobalErrorCode errorCode) {
+        if (list == null) return;
+        else if (list.size() != 0) throwGlobalCustomException(errorCode);
+    }
+    
+    /**
+     * 断言集合不为空
+     *
+     * @param list 集合
+     */
+    public static <T> void listIsNotNull(List<T> list, GlobalErrorCode errorCode) {
+        if (list == null || list.size() == 0) throwGlobalCustomException(errorCode);
+    }
+    
+    /**
+     * 断言时间在之后
+     *
+     * @param oldDate   旧时间
+     * @param newDate   新时间
+     * @param errorCode 错误码
+     */
+    public static void timeIsBefore(Date oldDate, Date newDate, GlobalErrorCode errorCode) {
+        if (oldDate.after(newDate)) throwGlobalCustomException(errorCode);
     }
 }

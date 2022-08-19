@@ -12,5 +12,6 @@ import org.yjhking.tigercc.domain.CourseSummary;
  * @since 2022-08-16
  */
 public interface ICourseSummaryService extends IService<CourseSummary> {
-
+    
+    boolean save(Long id);
 }
