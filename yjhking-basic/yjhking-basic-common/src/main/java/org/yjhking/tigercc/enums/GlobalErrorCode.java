@@ -38,6 +38,8 @@ public enum GlobalErrorCode {
     USER_PHONE_REPEAT_ERROR("40002", "手机已注册！"),
     USER_PHONE_FORMAT_ERROR("40003", "手机格式错误！"),
     USER_VERIFICATION_BLACK("40004", "您已被拉黑！"),
+    USER_IS_NULL("40005", "用户不存在！"),
+    USER_PASSWORD_IS_ERROR("40006", "密码错误！"),
     
     // common服务异常：500xx
     COMMON_VERIFICATION_ERROR("50001", "验证码创建失败！"),

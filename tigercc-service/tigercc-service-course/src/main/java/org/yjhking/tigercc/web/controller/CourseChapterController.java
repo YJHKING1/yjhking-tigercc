@@ -66,4 +66,9 @@ public class CourseChapterController {
         page = courseChapterService.selectPage(page);
         return JsonResult.success(new PageList<CourseChapter>(page.getTotal(), page.getRecords()));
     }
+    
+    @GetMapping("/listByCourseId/{courseId}")
+    public JsonResult listByCourseId(@PathVariable("courseId") Long courseId) {
+        return courseChapterService.listByCourseId(courseId);
+    }
 }

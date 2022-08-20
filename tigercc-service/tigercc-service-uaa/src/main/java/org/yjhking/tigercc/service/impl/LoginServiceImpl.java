@@ -1,12 +1,17 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.Login;
+import org.yjhking.tigercc.dto.LoginDto;
 import org.yjhking.tigercc.dto.RegisterDto;
+import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.LoginMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.ILoginService;
+import org.yjhking.tigercc.utils.VerificationUtils;
 
 /**
  * <p>
@@ -32,5 +37,13 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, Login> implements
         login.setAccountNonLocked(Login.TYPE_TRUE);
         insert(login);
         return JsonResult.success(login.getId());
+    }
+    
+    @Override
+    public JsonResult common(LoginDto dto) {
+        Login login = selectOne(new EntityWrapper<Login>().eq(TigerccConstants.USERNAME, dto.getUsername()));
+        VerificationUtils.isNotNull(login, GlobalErrorCode.USER_IS_NULL);
+        VerificationUtils.isEqualsTrim(login.getPassword(), dto.getPassword(), GlobalErrorCode.USER_PASSWORD_IS_ERROR);
+        return JsonResult.success();
     }
 }

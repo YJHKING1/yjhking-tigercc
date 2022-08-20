@@ -5,7 +5,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
-import org.yjhking.tigercc.constants.RedisConstants;
+import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.CourseType;
 import org.yjhking.tigercc.mapper.CourseTypeMapper;
 import org.yjhking.tigercc.service.ICourseTypeService;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class CourseTypeServiceImpl extends ServiceImpl<CourseTypeMapper, CourseType> implements ICourseTypeService {
     
     @Override
-    @Cacheable(cacheNames = RedisConstants.COURSE_TYPE_LIST_KEY, key = RedisConstants.COURSE_TYPE_LIST)
+    @Cacheable(cacheNames = TigerccConstants.COURSE_TYPE_LIST_KEY, key = TigerccConstants.COURSE_TYPE_LIST)
     public List<CourseType> treeData() {
         return tree();
     }
@@ -52,19 +52,19 @@ public class CourseTypeServiceImpl extends ServiceImpl<CourseTypeMapper, CourseT
     }
     
     @Override
-    @CacheEvict(cacheNames = RedisConstants.COURSE_TYPE_LIST_KEY, key = RedisConstants.COURSE_TYPE_LIST)
+    @CacheEvict(cacheNames = TigerccConstants.COURSE_TYPE_LIST_KEY, key = TigerccConstants.COURSE_TYPE_LIST)
     public boolean insert(CourseType entity) {
         return super.insert(entity);
     }
     
     @Override
-    @CacheEvict(cacheNames = RedisConstants.COURSE_TYPE_LIST_KEY, key = RedisConstants.COURSE_TYPE_LIST)
+    @CacheEvict(cacheNames = TigerccConstants.COURSE_TYPE_LIST_KEY, key = TigerccConstants.COURSE_TYPE_LIST)
     public boolean deleteById(Serializable id) {
         return super.deleteById(id);
     }
     
     @Override
-    @CacheEvict(cacheNames = RedisConstants.COURSE_TYPE_LIST_KEY, key = RedisConstants.COURSE_TYPE_LIST)
+    @CacheEvict(cacheNames = TigerccConstants.COURSE_TYPE_LIST_KEY, key = TigerccConstants.COURSE_TYPE_LIST)
     public boolean updateById(CourseType entity) {
         return super.updateById(entity);
     }

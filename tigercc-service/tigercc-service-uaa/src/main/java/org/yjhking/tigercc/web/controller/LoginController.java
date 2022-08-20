@@ -3,6 +3,7 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.Login;
+import org.yjhking.tigercc.dto.LoginDto;
 import org.yjhking.tigercc.dto.RegisterDto;
 import org.yjhking.tigercc.query.LoginQuery;
 import org.yjhking.tigercc.result.JsonResult;
@@ -10,6 +11,7 @@ import org.yjhking.tigercc.result.PageList;
 import org.yjhking.tigercc.service.ILoginService;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/login")
@@ -74,5 +76,10 @@ public class LoginController {
     @PostMapping("/insert")
     public JsonResult insert(@RequestBody RegisterDto dto) {
         return loginService.save(dto);
+    }
+    
+    @PostMapping("/common")
+    public JsonResult common(@RequestBody @Valid LoginDto dto) {
+        return loginService.common(dto);
     }
 }

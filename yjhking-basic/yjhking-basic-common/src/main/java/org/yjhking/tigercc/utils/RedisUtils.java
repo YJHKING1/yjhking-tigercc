@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.utils;
 
+import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
 
 /**
@@ -9,10 +10,10 @@ import org.yjhking.tigercc.constants.RedisConstants;
  */
 public class RedisUtils {
     public static String getSmsCodeTime(String codeString) {
-        return codeString.split(RedisConstants.REDIS_VERIFY)[RedisConstants.REDIS_VERIFY_SECOND];
+        return codeString.split(RedisConstants.REDIS_VERIFY)[NumberConstants.ONE];
     }
     
     public static String getSmsCode(String codeString) {
-        return codeString.split(RedisConstants.REDIS_VERIFY)[RedisConstants.REDIS_VERIFY_FIRST];
+        return codeString.split(RedisConstants.REDIS_VERIFY)[NumberConstants.ZERO];
     }
 }

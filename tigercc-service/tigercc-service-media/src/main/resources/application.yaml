@@ -26,3 +26,22 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+media:
+  upload-base-dir: "d:/" #分片上传地址
+  #oad‐location: "d:/"  #合并之后的视频文件存储地址
+  ffmpeg‐path: "D:/ffmpeg/ffmpeg-20180227-fa0c9d6-win64-static/bin/ffmpeg.exe" #ffmpeg视频工具安装地址
+  rtmp: "rtmp://115.159.88.63:1935/live/" #推流到云服务器的地址
+  play: "http://115.159.88.63:8080/live/"
+rocketmq:
+  name-server: 127.0.0.1:9876
+  #生产者配置
+  producer:
+    #生产者组名字
+    group: "service-media-producer"
+    # 消息最大长度 默认 1024 * 4 (4M)
+    max-message-size: 4096
+    # 发送消息超时时间，默认 3000
+    send-message-timeout: 3000
+    # 发送消息失败重试次数，默认2
+    retry-times-when-send-failed: 2
+    retry-times-when-send-async-failed: 2

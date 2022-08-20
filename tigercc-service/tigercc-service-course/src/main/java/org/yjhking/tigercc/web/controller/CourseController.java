@@ -1,7 +1,9 @@
 package org.yjhking.tigercc.web.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.domain.Course;
 import org.yjhking.tigercc.dto.CourseDto;
 import org.yjhking.tigercc.query.CourseQuery;
@@ -61,7 +63,8 @@ public class CourseController {
     @RequestMapping(value = "/pagelist", method = RequestMethod.POST)
     public JsonResult page(@RequestBody CourseQuery query) {
         Page<Course> page = new Page<Course>(query.getPage(), query.getRows());
-        page = courseService.selectPage(page);
+        page = courseService.selectPage(page, new EntityWrapper<Course>()
+                .like(RedisConstants.NAME, query.getKeyword()));
         return JsonResult.success(new PageList<Course>(page.getTotal(), page.getRecords()));
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
+import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.MessageBlack;
 import org.yjhking.tigercc.domain.MessageSms;
 import org.yjhking.tigercc.dto.BlackDto;
@@ -61,7 +62,7 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
     
     @Override
     // 添加redis缓存
-    @Cacheable(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    @Cacheable(value = TigerccConstants.BLACK_LIST_KEY, key = TigerccConstants.BLACK_LIST)
     public List<MessageBlack> selectBlack(String ip, String phone) {
         // 查userId
         List<MessageSms> messageSmsList = messageSmsService
@@ -72,7 +73,7 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
         EntityWrapper<MessageBlack> query = new EntityWrapper<>();
         // 根据ip或手机及userId查找数据库
         if (VerificationUtils.objectVerification(messageSms)) query.eq(RedisConstants.IP, ip)
-                .or().eq(RedisConstants.PHONE, phone).or().eq(RedisConstants.USER_ID, messageSms.getUserId());
+                .or().eq(RedisConstants.PHONE, phone).or().eq(TigerccConstants.USER_ID, messageSms.getUserId());
             // 根据ip或手机查找数据库
         else query.eq(RedisConstants.IP, ip).or().eq(RedisConstants.PHONE, phone);
         return selectList(query);
@@ -99,19 +100,19 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
     
     @Override
     // 删除redis缓存
-    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    @CacheEvict(value = TigerccConstants.BLACK_LIST_KEY, key = TigerccConstants.BLACK_LIST)
     public boolean insert(MessageBlack entity) {
         return super.insert(entity);
     }
     
     @Override
-    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    @CacheEvict(value = TigerccConstants.BLACK_LIST_KEY, key = TigerccConstants.BLACK_LIST)
     public boolean deleteById(Serializable id) {
         return super.deleteById(id);
     }
     
     @Override
-    @CacheEvict(value = RedisConstants.BLACK_LIST_KEY, key = RedisConstants.BLACK_LIST)
+    @CacheEvict(value = TigerccConstants.BLACK_LIST_KEY, key = TigerccConstants.BLACK_LIST)
     public boolean updateById(MessageBlack entity) {
         return super.updateById(entity);
     }
