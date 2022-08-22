@@ -67,4 +67,20 @@ public class CourseController {
                 .like(RedisConstants.NAME, query.getKeyword()));
         return JsonResult.success(new PageList<Course>(page.getTotal(), page.getRecords()));
     }
+    
+    /**
+     * 上架课程
+     */
+    @PostMapping("/onLineCourse/{id}")
+    public JsonResult onLineCourse(@PathVariable("id") Long id) {
+        return courseService.onLineCourse(id);
+    }
+    
+    /**
+     * 下架课程
+     */
+    @PostMapping("/offLineCourse/{id}")
+    public JsonResult offLineCourse(@PathVariable("id") Long id) {
+        return courseService.offLineCourse(id);
+    }
 }

@@ -55,7 +55,10 @@ public enum GlobalErrorCode {
     COURSE_ERROR("60000", "课程服务异常！"),
     COURSE_TIME_ERROR("60001", "课程时间错误！"),
     COURSE_NAME_REPEAT("60002", "课程名重复！"),
-    COURSE_PRICE_IS_NULL("60002", "课程价格不能为空！");
+    COURSE_PRICE_IS_NULL("60002", "课程价格不能为空！"),
+    
+    // search服务异常：700xx
+    SEARCH_ERROR("70000", "搜索服务异常！");
     
     // 异常码
     private String code;

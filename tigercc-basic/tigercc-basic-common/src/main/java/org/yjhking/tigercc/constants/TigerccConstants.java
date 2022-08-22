@@ -25,4 +25,5 @@ public class TigerccConstants {
      */
     public static final String COURSE_TYPE_LIST = "'course_type_list'";
     public static final String USERNAME = "username";
+    public static final String SAVE_TEACHER_SEPARATOR = "，";
 }

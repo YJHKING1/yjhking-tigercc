@@ -1,21 +1,35 @@
 package org.yjhking.tigercc.service.impl;
 
+
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
+import org.yjhking.tigercc.constants.TigerccConstants;
+import org.yjhking.tigercc.doc.CourseDoc;
 import org.yjhking.tigercc.domain.Course;
 import org.yjhking.tigercc.domain.CourseTeacher;
 import org.yjhking.tigercc.domain.Teacher;
 import org.yjhking.tigercc.dto.CourseDto;
+import org.yjhking.tigercc.dto.MessageProperties;
+import org.yjhking.tigercc.dto.StationMessage2MQDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
+import org.yjhking.tigercc.feignclient.SearchFeignClient;
 import org.yjhking.tigercc.mapper.CourseMapper;
+import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.*;
 import org.yjhking.tigercc.utils.VerificationUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +54,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private ITeacherService teacherService;
     @Resource
     private ICourseTeacherService courseTeacherService;
+    @Resource
+    private SearchFeignClient searchFeignClient;
+    @Resource
+    private RocketMQTemplate template;
+    @Resource
+    private MessageProperties messageProperties;
     
     @Transactional
     @Override
@@ -62,6 +82,52 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         saveCourseTeacher(dto);
     }
     
+    @Override
+    public JsonResult onLineCourse(Long id) {
+        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
+        CourseDoc courseDoc = id2CourseDoc(id, NumberConstants.ONE);
+        searchFeignClient.saveCourse(courseDoc);
+        // 用MQ发送站内消息
+        sendMQMessage(courseDoc);
+        // todo 发送短信
+        // todo 发送邮件
+        return JsonResult.success();
+    }
+    
+    /**
+     * 发送站内消息
+     */
+    private void sendMQMessage(CourseDoc courseDoc) {
+        template.syncSend(MQConstants.TOPIC_COURSE_FILE + RedisConstants.REDIS_VERIFY +
+                MQConstants.TAGS_COURSE_FILE, MessageBuilder.withPayload(JSON.toJSONString(
+                new StationMessage2MQDto(messageProperties.getTitle(), String.format(
+                        messageProperties.getContent(), courseDoc.getName(), courseDoc.getId())
+                        , messageProperties.getType(), Collections.singletonList(courseDoc.getId())))).build());
+    }
+    
+    /**
+     * id转课程Doc对象
+     */
+    private CourseDoc id2CourseDoc(Long id, int status) {
+        Course course = selectById(id);
+        course.setStatus(status);
+        course.setOnlineTime(new Date());
+        // 更新上下架状态
+        updateById(course);
+        CourseDoc courseDoc = new CourseDoc();
+        BeanUtils.copyProperties(course, courseDoc);
+        BeanUtils.copyProperties(courseMarketService.selectById(id), courseDoc);
+        BeanUtils.copyProperties(courseSummaryService.selectById(id), courseDoc);
+        return courseDoc;
+    }
+    
+    @Override
+    public JsonResult offLineCourse(Long id) {
+        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
+        searchFeignClient.deleteCourse(id2CourseDoc(id, NumberConstants.ZERO));
+        return JsonResult.success();
+    }
+    
     /**
      * 保存教师
      *
@@ -69,7 +135,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     private void saveTeacher(CourseDto dto) {
         dto.getCourse().setTeacherNames(teacherService.selectBatchIds(dto.getTeacharIds()).stream()
-                .map(Teacher::getName).collect(Collectors.joining("，")));
+                .map(Teacher::getName).collect(Collectors.joining(TigerccConstants.SAVE_TEACHER_SEPARATOR)));
     }
     
     /**

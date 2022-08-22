@@ -37,3 +37,16 @@ tigercc:
   imgverifycode: # 图片验证码配置
     length: 4 # 验证码长度
     expire: 10 # 验证码过期时间；单位分钟(minute)
+rocketmq:
+  name-server: 127.0.0.1:9876
+  #生产者配置
+  producer:
+    #生产者组名字
+    group: "service-course-producer"
+    # 消息最大长度 默认 1024 * 4 (4M)
+    max-message-size: 4096
+    # 发送消息超时时间，默认 3000
+    send-message-timeout: 3000
+    # 发送消息失败重试次数，默认2
+    retry-times-when-send-failed: 2
+    retry-times-when-send-async-failed: 2
