@@ -74,4 +74,9 @@ public class CourseTypeController {
     public JsonResult treeData() {
         return JsonResult.success(courseTypeService.treeData());
     }
+    
+    @GetMapping("/crumbs/{id}")
+    public JsonResult crumbs(@PathVariable Long id) {
+        return courseTypeService.crumbs(id);
+    }
 }

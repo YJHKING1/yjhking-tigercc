@@ -7,14 +7,15 @@ import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.CourseType;
+import org.yjhking.tigercc.dto.CourseTypeCrumbsDto;
+import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.CourseTypeMapper;
+import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.ICourseTypeService;
+import org.yjhking.tigercc.utils.VerificationUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,38 @@ public class CourseTypeServiceImpl extends ServiceImpl<CourseTypeMapper, CourseT
     @Cacheable(cacheNames = TigerccConstants.COURSE_TYPE_LIST_KEY, key = TigerccConstants.COURSE_TYPE_LIST)
     public List<CourseType> treeData() {
         return tree();
+    }
+    
+    @Override
+    public JsonResult crumbs(Long id) {
+        // 查找所有课程分类
+        List<CourseType> courseTypes = selectList(null);
+        // 查找当前课程分类
+        CourseType ownerType = findCourseTypeById(id, courseTypes);
+        // 判断当前课程分类是否为空
+        VerificationUtils.isNotNull(ownerType, GlobalErrorCode.COURSE_TYPE_IS_NULL);
+        // 声明返回集合
+        List<CourseTypeCrumbsDto> resultList = new ArrayList<>();
+        // 遍历当前课程分类的path，并将它们的同级分类添加到返回集合中
+        for (Long cid : Arrays.stream(ownerType.getPath().split(TigerccConstants.CRUMBS_PATH_SPLIT))
+                .mapToLong(Long::parseLong).toArray()) {
+            CourseType courseType = findCourseTypeById(cid, courseTypes);
+            resultList.add(new CourseTypeCrumbsDto(courseType, courseTypes.stream().filter(type -> type.getPid()
+                    .equals(courseType.getPid())).collect(Collectors.toList())));
+        }
+        return JsonResult.success(resultList);
+    }
+    
+    /**
+     * 通过id查找课程分类
+     *
+     * @param id          要查找的id
+     * @param courseTypes 课程分类列表
+     * @return 课程分类
+     */
+    private CourseType findCourseTypeById(Long id, List<CourseType> courseTypes) {
+        return courseTypes.stream().filter(type -> type.getId().equals(id)).findFirst()
+                .orElse(null);
     }
     
     /**

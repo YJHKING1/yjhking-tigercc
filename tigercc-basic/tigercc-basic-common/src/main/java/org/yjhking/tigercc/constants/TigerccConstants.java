@@ -26,4 +26,6 @@ public class TigerccConstants {
     public static final String COURSE_TYPE_LIST = "'course_type_list'";
     public static final String USERNAME = "username";
     public static final String SAVE_TEACHER_SEPARATOR = "，";
+    public static final String CRUMBS_PID = "pid";
+    public static final String CRUMBS_PATH_SPLIT = "\\.";
 }
