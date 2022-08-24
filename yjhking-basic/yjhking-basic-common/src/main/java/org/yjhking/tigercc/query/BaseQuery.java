@@ -16,5 +16,6 @@ public class BaseQuery {
     private Integer page = 1; //当前页
     
     private Integer rows = 10; //每页显示多少条
-    
+    private String sortField;
+    private String sortType;
 }
