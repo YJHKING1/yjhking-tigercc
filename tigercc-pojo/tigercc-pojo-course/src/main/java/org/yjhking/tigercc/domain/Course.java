@@ -22,6 +22,8 @@ import java.util.Date;
 @TableName("t_course")
 public class Course extends Model<Course> {
     
+    public static final Integer STATUS_ONLINE = 1;
+    public static final Integer STATUS_NOT_ONLINE = 0;
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)

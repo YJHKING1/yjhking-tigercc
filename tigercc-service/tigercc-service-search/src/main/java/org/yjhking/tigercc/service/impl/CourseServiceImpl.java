@@ -2,6 +2,8 @@ package org.yjhking.tigercc.service.impl;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -12,16 +14,22 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.ESConstants;
 import org.yjhking.tigercc.constants.NumberConstants;
+import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.doc.CourseDoc;
 import org.yjhking.tigercc.dto.SearchDto;
 import org.yjhking.tigercc.mapper.HighlightResultMapper;
 import org.yjhking.tigercc.repository.CourseESRepository;
 import org.yjhking.tigercc.result.JsonResult;
-import org.yjhking.tigercc.result.PageList;
 import org.yjhking.tigercc.service.CourseService;
 import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.vo.AggPageList;
+import org.yjhking.tigercc.vo.BucketVO;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author YJH
@@ -49,11 +57,22 @@ public class CourseServiceImpl implements CourseService {
         // 高亮
         builder.withHighlightFields(new HighlightBuilder.Field(ESConstants.NAME)
                 .preTags(ESConstants.PRE_TAGS).postTags(ESConstants.POST_TAGS));
+        // 聚合
+        /*builder.addAggregation(AggregationBuilders.terms(TigerccConstants.GRADE_NAME_AGG)
+                        .field(TigerccConstants.GRADE_NAME))
+                .addAggregation(AggregationBuilders.terms(TigerccConstants.CHARGE_NAME_AGG)
+                        .field(TigerccConstants.CHARGE_NAME));*/
         // 查询
         // Page<CourseDoc> search = courseESRepository.search(builder.build());
         AggregatedPage<CourseDoc> courseDocs = elasticsearchRestTemplate.queryForPage(
                 builder.build(), CourseDoc.class, highlightResultMapper);
-        return JsonResult.success(new PageList<>(courseDocs.getTotalElements(), courseDocs.getContent()));
+        // 聚合结果
+        /*Map<String, List<BucketVO>> aggResultMap = new HashMap<>();
+        courseDocs.getAggregations().asMap().forEach((aggName, agg) ->
+                aggResultMap.put(aggName, ((ParsedStringTerms) agg).getBuckets().stream().map(bucket ->
+                        new BucketVO(bucket.getKeyAsString(), bucket.getDocCount())).collect(Collectors.toList())));*/
+        return JsonResult.success(
+                new AggPageList<>(courseDocs.getTotalElements(), courseDocs.getContent(), null));
     }
     
     /**

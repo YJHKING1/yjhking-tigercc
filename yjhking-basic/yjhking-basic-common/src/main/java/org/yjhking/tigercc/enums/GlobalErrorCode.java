@@ -25,6 +25,7 @@ public enum GlobalErrorCode {
     SERVICE_IP_ERROR("10007", "IP异常！"),
     SERVICE_LIST_IS_NOT_NULL("10008", "集合不为空！"),
     SERVICE_LIST_IS_NULL("10009", "集合为空！"),
+    SERVICE_ILLEGAL_REQUEST("10010", "非法请求！"),
     
     // system服务异常：200xx
     SYSTEM_ERROR("20000", "系统服务异常！"),
@@ -57,9 +58,17 @@ public enum GlobalErrorCode {
     COURSE_NAME_REPEAT("60002", "课程名重复！"),
     COURSE_PRICE_IS_NULL("60002", "课程价格不能为空！"),
     COURSE_TYPE_IS_NULL("60003", "课程分类不存在！"),
+    COURSE_IS_NOT_ONLINE("60004", "课程未上线！"),
+    COURSE_ID_IS_NULL("60005", "课程ID不能为空！"),
+    COURSE_IS_NULL("60006", "课程为空！"),
+    COURSE_IS_NOT_BUY("60007", "课程未购买！"),
     
     // search服务异常：700xx
-    SEARCH_ERROR("70000", "搜索服务异常！");
+    SEARCH_ERROR("70000", "搜索服务异常！"),
+    
+    // media服务异常：800xx
+    MEDIA_ERROR("80000", "媒体服务异常！"),
+    MEDIA_LIST_NULL("80001", "视频列表加载失败！");
     
     // 异常码
     private String code;

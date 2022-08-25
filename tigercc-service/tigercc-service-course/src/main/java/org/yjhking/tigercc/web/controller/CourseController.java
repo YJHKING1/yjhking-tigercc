@@ -83,4 +83,12 @@ public class CourseController {
     public JsonResult offLineCourse(@PathVariable("id") Long id) {
         return courseService.offLineCourse(id);
     }
+    @GetMapping("/detail/data/{id}")
+    public JsonResult selectCourseDataForDetail(@PathVariable("id") Long id) {
+        return courseService.selectCourseDataForDetail(id);
+    }
+    @GetMapping("/selectCourse/{id}")
+    public JsonResult selectCourseStatusForUser(@PathVariable("id") Long id){
+        return courseService.selectCourseStatusForUser(id);
+    }
 }

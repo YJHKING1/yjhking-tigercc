@@ -45,3 +45,13 @@ rocketmq:
     # 发送消息失败重试次数，默认2
     retry-times-when-send-failed: 2
     retry-times-when-send-async-failed: 2
+feign:
+  sentinel:
+    enabled: true # 开启熔断功能
+  compression:
+    request:
+      enabled: true
+      min-request-size: 1024 # 最小阈值，小于这个不压缩
+      mime-types: text/xml,application/xml,application/json # 压缩哪些类型的数据
+    response:
+      enabled: true

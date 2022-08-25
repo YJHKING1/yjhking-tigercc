@@ -18,12 +18,18 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
+import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.MediaFile;
+import org.yjhking.tigercc.dto.CourseStatus;
+import org.yjhking.tigercc.enums.GlobalErrorCode;
+import org.yjhking.tigercc.exception.GlobalCustomException;
+import org.yjhking.tigercc.feignclient.CourseFeignClient;
 import org.yjhking.tigercc.mapper.MediaFileMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IMediaFileService;
 import org.yjhking.tigercc.utils.HlsVideoUtil;
 import org.yjhking.tigercc.utils.Mp4VideoUtil;
+import org.yjhking.tigercc.utils.VerificationUtils;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -44,7 +50,8 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
     private RocketMQTemplate template;
     //@Autowired
     //private MediaProducer mediaProducer;
-    
+    @Resource
+    private CourseFeignClient courseFeignClient;
     /**
      * 配置
      * ===============================================================================================================
@@ -226,6 +233,35 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
         return JsonResult.success();
     }
     
+    @Override
+    public JsonResult selectByCourseId(Long courseId) {
+        return JsonResult.success(selectList(new EntityWrapper<MediaFile>().eq(TigerccConstants.COURSE_ID, courseId)));
+    }
+    
+    @Override
+    public JsonResult getUrlForUserById(Long mediaId) {
+        // 判断参数
+        VerificationUtils.isNotNull(mediaId, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        MediaFile mediaFile = selectById(mediaId);
+        VerificationUtils.isNotNull(mediaFile, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 获取课程状态：是否免费，是否购买，是否上线（Feign）
+        JsonResult jsonResult = courseFeignClient.selectCourseStatusForUser(mediaFile.getCourseId());
+        VerificationUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.COURSE_ERROR);
+        VerificationUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.COURSE_ERROR);
+        // 去课程服务编写查询接口，查询这三个状态
+        CourseStatus courseStatus = JSON.parseObject(JSON.toJSONString(jsonResult.getData()), CourseStatus.class);
+        // 判断课程是否上线
+        VerificationUtils.isTrue(courseStatus.getOnlined(), GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        // 免费直接返回播放地址
+        if (courseStatus.getFree()) return JsonResult.success(mediaFile.getFileUrl());
+        // 用户购买了返回播放地址
+        if (courseStatus.getBuyed()) return JsonResult.success(mediaFile.getFileUrl());
+        // 如果是试看：直接返回播放地址
+        if (VerificationUtils.objectVerification(mediaFile.getFree()) && mediaFile.getFree())
+            return JsonResult.success(mediaFile.getFileUrl());
+        // 否则，不返回播放地址
+        throw new GlobalCustomException(GlobalErrorCode.COURSE_IS_NOT_BUY);
+    }
     
     /*
      *根据文件md5得到文件路径

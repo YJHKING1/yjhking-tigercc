@@ -20,4 +20,7 @@ public interface ICourseService extends IService<Course> {
     JsonResult onLineCourse(Long id);
     
     JsonResult offLineCourse(Long id);
+    
+    JsonResult selectCourseDataForDetail(Long id);
+    JsonResult selectCourseStatusForUser(Long id);
 }

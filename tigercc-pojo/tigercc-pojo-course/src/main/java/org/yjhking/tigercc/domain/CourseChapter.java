@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -17,6 +20,7 @@ import java.io.Serializable;
  * @since 2022-08-16
  */
 @TableName("t_course_chapter")
+@Data
 public class CourseChapter extends Model<CourseChapter> {
     
     private static final long serialVersionUID = 1L;
@@ -41,61 +45,11 @@ public class CourseChapter extends Model<CourseChapter> {
      */
     @TableField("course_name")
     private String courseName;
-    
-    
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Integer getNumber() {
-        return number;
-    }
-    
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-    
-    public Long getCourseId() {
-        return courseId;
-    }
-    
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-    
-    public String getCourseName() {
-        return courseName;
-    }
-    
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
+    @TableField(exist = false)
+    private List<MediaFile> mediaFileList = new ArrayList<>();
     
     @Override
     protected Serializable pkVal() {
         return this.id;
-    }
-    
-    @Override
-    public String toString() {
-        return "CourseChapter{" +
-                ", id=" + id +
-                ", name=" + name +
-                ", number=" + number +
-                ", courseId=" + courseId +
-                ", courseName=" + courseName +
-                "}";
     }
 }

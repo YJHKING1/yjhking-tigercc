@@ -3,6 +3,7 @@ package org.yjhking.tigercc.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.BeanUtils;
@@ -14,22 +15,25 @@ import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.doc.CourseDoc;
-import org.yjhking.tigercc.domain.Course;
-import org.yjhking.tigercc.domain.CourseTeacher;
-import org.yjhking.tigercc.domain.Teacher;
+import org.yjhking.tigercc.domain.*;
 import org.yjhking.tigercc.dto.CourseDto;
+import org.yjhking.tigercc.dto.CourseStatus;
 import org.yjhking.tigercc.dto.MessageProperties;
 import org.yjhking.tigercc.dto.StationMessage2MQDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
+import org.yjhking.tigercc.feignclient.MediaFeignClient;
 import org.yjhking.tigercc.feignclient.SearchFeignClient;
 import org.yjhking.tigercc.mapper.CourseMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.*;
 import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.vo.CourseDataForDetailVO;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +64,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private RocketMQTemplate template;
     @Resource
     private MessageProperties messageProperties;
+    @Resource
+    private ICourseUserLearnService courseUserLearnService;
+    @Resource
+    private ICourseChapterService chapterService;
+    @Resource
+    private MediaFeignClient mediaFeignClient;
     
     @Transactional
     @Override
@@ -126,6 +136,81 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
         searchFeignClient.deleteCourse(id2CourseDoc(id, NumberConstants.ZERO));
         return JsonResult.success();
+    }
+    
+    @Override
+    public JsonResult selectCourseDataForDetail(Long id) {
+        // 判断id
+        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 查询课程
+        Course course = selectById(id);
+        VerificationUtils.isNotNull(course, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 判断课程是否上线
+        VerificationUtils.isEqualsObj(course.getStatus(), Course.STATUS_ONLINE
+                , GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        // 查询并返回
+        return JsonResult.success(new CourseDataForDetailVO(course, courseMarketService.selectById(id)
+                , courseDetailService.selectById(id), courseSummaryService.selectById(id)
+                , selectTeachersByCourseId(id), selectChaptersByCourseId(id)));
+    }
+    
+    @Override
+    public JsonResult selectCourseStatusForUser(Long courseId) {
+        // 判断id是否为空
+        VerificationUtils.isNotNull(courseId, GlobalErrorCode.COURSE_ID_IS_NULL);
+        // 查询课程
+        Course course = selectById(courseId);
+        // 判断课程是否为空
+        VerificationUtils.isNotNull(course, GlobalErrorCode.COURSE_IS_NULL);
+        // 查询课程营销
+        CourseMarket courseMarket = courseMarketService.selectById(courseId);
+        VerificationUtils.isNotNull(courseMarket, GlobalErrorCode.COURSE_IS_NULL);
+        // 登录对象
+        // todo 假数据
+        Long loginId = 3L;
+        // 是否上线
+        VerificationUtils.isEqualsObj(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        // 判断是否免费
+        if (VerificationUtils.equalsVer(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
+            return JsonResult.success(new CourseStatus());
+        // 是否购买
+        VerificationUtils.isNotNull(selectByUserIdAndCourseId(loginId, courseId), GlobalErrorCode.COURSE_IS_NOT_BUY);
+        return JsonResult.success(new CourseStatus());
+    }
+    
+    /**
+     * 查询用户有没有购买某个课程
+     */
+    private CourseUserLearn selectByUserIdAndCourseId(Long loginId, Long courseId) {
+        return courseUserLearnService.selectOne(new EntityWrapper<CourseUserLearn>().eq(TigerccConstants.LOGIN_ID
+                , loginId).eq(TigerccConstants.COURSE_ID, courseId).eq(TigerccConstants.STATE, NumberConstants.ZERO));
+    }
+    
+    /**
+     * 根据课程查询章节
+     */
+    private List<CourseChapter> selectChaptersByCourseId(Long courseId) {
+        List<CourseChapter> courseChapters = chapterService.selectList(
+                new EntityWrapper<CourseChapter>().eq(TigerccConstants.COURSE_ID, courseId));
+        JsonResult jsonResult = mediaFeignClient.selectByCourseId(courseId);
+        VerificationUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.MEDIA_ERROR);
+        VerificationUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.MEDIA_LIST_NULL);
+        JSON.parseArray(JSON.toJSONString(jsonResult.getData()), MediaFile.class).forEach(mediaFile -> {
+             mediaFile.setFileUrl("");
+            CourseChapter courseChapter = courseChapters.stream().collect(Collectors.toMap(CourseChapter::getId
+                    , CourseChapter -> CourseChapter)).get(mediaFile.getChapterId());
+            if (VerificationUtils.objectVerification(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);
+        });
+        return courseChapters;
+    }
+    
+    /**
+     * 根据课程查询老师
+     */
+    private List<Teacher> selectTeachersByCourseId(Long courseId) {
+        return teacherService.selectBatchIds(courseTeacherService.selectList(new EntityWrapper<CourseTeacher>()
+                        .eq("course_id", courseId)).stream().map(CourseTeacher::getTeacherId)
+                .collect(Collectors.toList()));
     }
     
     /**

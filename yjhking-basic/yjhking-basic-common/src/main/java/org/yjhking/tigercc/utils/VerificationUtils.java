@@ -35,6 +35,14 @@ public class VerificationUtils {
     }
     
     /**
+     * 对象比较
+     */
+    public static boolean equalsVer(Object o1, Object o2){
+        if (!objectVerification(o1)) return false;
+        if (!objectVerification(o2)) return false;
+        return o1.equals(o2);
+    }
+    /**
      * list集合非空校验
      *
      * @param list list集合
@@ -110,6 +118,22 @@ public class VerificationUtils {
         isNotEmpty(s1);
         isNotEmpty(s2);
         if (!s1.equals(s2)) throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
+    }
+    /**
+     * 断言两个对象一致
+     */
+    public static void isEqualsObj(Object o1, Object o2) {
+        isNotNull(o1);
+        isNotNull(o2);
+        if (!o1.equals(o2)) throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
+    }
+    /**
+     * 断言两个对象一致
+     */
+    public static void isEqualsObj(Object o1, Object o2,GlobalErrorCode errorCode) {
+        isNotNull(o1);
+        isNotNull(o2);
+        if (!o1.equals(o2)) throwGlobalCustomException(errorCode);
     }
     
     /**

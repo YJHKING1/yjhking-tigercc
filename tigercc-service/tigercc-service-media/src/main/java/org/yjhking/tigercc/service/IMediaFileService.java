@@ -35,4 +35,8 @@ public interface IMediaFileService extends IService<MediaFile> {
     
     //处理文件
     JsonResult handleFile2m3u8(MediaFile mediaFile);
+    
+    JsonResult selectByCourseId(Long courseId);
+    
+    JsonResult getUrlForUserById(Long id);
 }

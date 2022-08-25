@@ -7,6 +7,8 @@ package org.yjhking.tigercc.constants;
  */
 public class TigerccConstants {
     public static final String COURSE_ID = "course_id";
+    public static final String LOGIN_ID = "login_id";
+    public static final String STATE = "state";
     public static final String USER_ID = "user_id";
     /**
      * 黑名单缓存key
@@ -28,4 +30,8 @@ public class TigerccConstants {
     public static final String SAVE_TEACHER_SEPARATOR = "，";
     public static final String CRUMBS_PID = "pid";
     public static final String CRUMBS_PATH_SPLIT = "\\.";
+    public static final String GRADE_NAME_AGG = "gradeNameAgg";
+    public static final String GRADE_NAME = "gradeName";
+    public static final String CHARGE_NAME_AGG = "chargeNameAgg";
+    public static final String CHARGE_NAME = "chargeName";
 }

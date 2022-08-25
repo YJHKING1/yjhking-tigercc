@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 public class CourseMarket extends Model<CourseMarket> {
     
     private static final long serialVersionUID = 1L;
+    public static final Integer CHARGE_FREE = 1;
     
     /**
      * 课程id
