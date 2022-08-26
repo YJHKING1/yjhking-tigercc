@@ -126,8 +126,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         updateById(course);
         CourseDoc courseDoc = new CourseDoc();
         BeanUtils.copyProperties(course, courseDoc);
-        BeanUtils.copyProperties(courseMarketService.selectById(id), courseDoc);
+        CourseMarket courseMarket = courseMarketService.selectById(id);
+        BeanUtils.copyProperties(courseMarket, courseDoc);
         BeanUtils.copyProperties(courseSummaryService.selectById(id), courseDoc);
+        if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
+            courseDoc.setChargeName(CourseMarket.CHARGE_FREE_NAME);
+        else if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE))
+            courseDoc.setChargeName(CourseMarket.CHARGE_UN_FREE_NAME);
         return courseDoc;
     }
     
@@ -184,8 +189,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         // 分割id并查询课程
         List<Long> courseIdsList = StrUtils.splitStr2LongArr(courseIds, TigerccConstants.SEPARATOR);
         List<Course> courses = selectBatchIds(courseIdsList);
-        VerificationUtils.isNotNull(courses,GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
-        VerificationUtils.isEquals(courses.size(),courseIdsList.size(),GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        VerificationUtils.isNotNull(courses, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        VerificationUtils.isEquals(courses.size(), courseIdsList.size(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 批量查询营销
         Map<Long, CourseMarket> courseMarketsMap = courseMarketService.selectBatchIds(courseIdsList).stream()
                 .collect(Collectors.toMap(CourseMarket::getId, CourseMarket -> CourseMarket));
@@ -194,9 +199,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (Course course : courses) {
             CourseMarket courseMarket = courseMarketsMap.get(course.getId());
-            VerificationUtils.isEquals(course.getStatus(),Course.STATUS_ONLINE,GlobalErrorCode.COURSE_IS_NOT_ONLINE);
-            VerificationUtils.isEquals(courseMarket.getCharge(),CourseMarket.CHARGE_UN_FREE
-                    ,GlobalErrorCode.COURSE_IS_FREE);
+            VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+            VerificationUtils.isEquals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE
+                    , GlobalErrorCode.COURSE_IS_FREE);
             itemVos.add(new CourseItemDataOrderVo(course, courseMarket));
             totalAmount = totalAmount.add(courseMarket.getPrice());
         }
@@ -221,7 +226,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         VerificationUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.MEDIA_ERROR);
         VerificationUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.MEDIA_LIST_NULL);
         JSON.parseArray(JSON.toJSONString(jsonResult.getData()), MediaFile.class).forEach(mediaFile -> {
-             mediaFile.setFileUrl("");
+            mediaFile.setFileUrl("");
             CourseChapter courseChapter = courseChapters.stream().collect(Collectors.toMap(CourseChapter::getId
                     , CourseChapter -> CourseChapter)).get(mediaFile.getChapterId());
             if (VerificationUtils.isValid(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);

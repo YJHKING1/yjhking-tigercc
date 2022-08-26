@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.service.impl;
 
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.doc.CourseDoc;
 import org.yjhking.tigercc.repository.CourseESRepository;
@@ -15,9 +16,14 @@ import javax.annotation.Resource;
 public class ESCourseServiceImpl implements ESCourseService {
     @Resource
     private CourseESRepository courseESRepository;
+    @Resource
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
     
     @Override
     public JsonResult save(CourseDoc courseDoc) {
+        // 添加索引
+        elasticsearchRestTemplate.createIndex(CourseDoc.class);
+        elasticsearchRestTemplate.putMapping(CourseDoc.class);
         courseESRepository.save(courseDoc);
         return JsonResult.success();
     }

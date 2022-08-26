@@ -23,6 +23,8 @@ public class CourseMarket extends Model<CourseMarket> {
     private static final long serialVersionUID = 1L;
     public static final Integer CHARGE_FREE = 1;
     public static final Integer CHARGE_UN_FREE = 2;
+    public static final String CHARGE_FREE_NAME = "免费";
+    public static final String CHARGE_UN_FREE_NAME = "收费";
     
     /**
      * 课程id
