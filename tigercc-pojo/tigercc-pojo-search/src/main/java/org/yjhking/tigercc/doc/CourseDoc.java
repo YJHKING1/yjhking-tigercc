@@ -22,10 +22,10 @@ public class CourseDoc {
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String name;
     
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword,fielddata = true)
     private String gradeName;
     
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword,fielddata = true)
     private String chargeName;
     
     @Field(type = FieldType.Long)

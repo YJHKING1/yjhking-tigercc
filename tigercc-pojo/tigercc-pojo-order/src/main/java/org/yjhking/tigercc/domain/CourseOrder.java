@@ -22,7 +22,22 @@ import java.util.Date;
 public class CourseOrder extends Model<CourseOrder> {
     
     private static final long serialVersionUID = 1L;
-    
+    /**
+     * 下单成功待支付
+     */
+    public static final int STATE_WAIT_PAY = 0;
+    /**
+     * 支付成功，订单完成
+     */
+    public static final int STATE_SUCCESS_PAY = 1;
+    /**
+     * 手动取消订单
+     */
+    public static final int STATE_USER_CANCEL = 2;
+    /**
+     * 超时自动取消订单
+     */
+    public static final int STATE_AUTO_CANCEL = 3;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**

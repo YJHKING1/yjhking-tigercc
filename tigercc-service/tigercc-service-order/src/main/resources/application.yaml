@@ -26,3 +26,13 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+feign:
+  sentinel:
+    enabled: true # 开启熔断功能
+  compression:
+    request:
+      enabled: true
+      min-request-size: 1024 # 最小阈值，小于这个不压缩
+      mime-types: text/xml,application/xml,application/json # 压缩哪些类型的数据
+    response:
+      enabled: true

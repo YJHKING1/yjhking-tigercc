@@ -43,7 +43,7 @@ public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, Message
         // ip保存
         ServletRequestAttributes requestAttributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (VerificationUtils.objectVerification(requestAttributes))
+        if (VerificationUtils.isValid(requestAttributes))
             messageSms.setIp(requestAttributes.getRequest().getRemoteAddr());
         super.insert(messageSms);
     }

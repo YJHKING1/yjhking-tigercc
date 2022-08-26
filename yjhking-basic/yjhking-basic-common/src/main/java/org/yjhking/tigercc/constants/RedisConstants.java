@@ -34,4 +34,5 @@ public class RedisConstants {
      * 名字
      */
     public static final String NAME = "name";
+    public static final String TOKEN = "token:";
 }

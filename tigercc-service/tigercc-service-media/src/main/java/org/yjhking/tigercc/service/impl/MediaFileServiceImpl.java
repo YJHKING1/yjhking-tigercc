@@ -257,7 +257,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
         // 用户购买了返回播放地址
         if (courseStatus.getBuyed()) return JsonResult.success(mediaFile.getFileUrl());
         // 如果是试看：直接返回播放地址
-        if (VerificationUtils.objectVerification(mediaFile.getFree()) && mediaFile.getFree())
+        if (VerificationUtils.isValid(mediaFile.getFree()) && mediaFile.getFree())
             return JsonResult.success(mediaFile.getFileUrl());
         // 否则，不返回播放地址
         throw new GlobalCustomException(GlobalErrorCode.COURSE_IS_NOT_BUY);

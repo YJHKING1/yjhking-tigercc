@@ -20,7 +20,7 @@ public class VerificationUtils {
      * @param str 字符串
      * @return true:非空 false:空
      */
-    public static boolean stringVerification(String str) {
+    public static boolean hasLength(String str) {
         return str != null && str.trim().length() > 0;
     }
     
@@ -30,25 +30,30 @@ public class VerificationUtils {
      * @param obj 对象
      * @return true:非空 false:空
      */
-    public static boolean objectVerification(Object obj) {
+    public static boolean isValid(Object obj) {
         return obj != null;
     }
     
     /**
      * 对象比较
+     *
+     * @param o1 对象1
+     * @param o2 对象2
+     * @return true:相等 false:不相等
      */
-    public static boolean equalsVer(Object o1, Object o2){
-        if (!objectVerification(o1)) return false;
-        if (!objectVerification(o2)) return false;
+    public static boolean equals(Object o1, Object o2) {
+        if (!isValid(o1)) return false;
+        if (!isValid(o2)) return false;
         return o1.equals(o2);
     }
+    
     /**
      * list集合非空校验
      *
      * @param list list集合
      * @return true:非空 false:空
      */
-    public static <T> boolean listVerification(List<T> list) {
+    public static <T> boolean hasLength(List<T> list) {
         return list != null && list.size() > 0;
     }
     
@@ -67,7 +72,7 @@ public class VerificationUtils {
      *
      * @param text 字符串
      */
-    public static void isNotEmpty(String text) {
+    public static void isHasLength(String text) {
         if (text == null || text.trim().length() == 0)
             throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NULL);
     }
@@ -109,28 +114,25 @@ public class VerificationUtils {
     }
     
     /**
-     * 断言两个字符串一致
-     *
-     * @param s1 第一个字符串
-     * @param s2 第二个字符串
-     */
-    public static void isEquals(String s1, String s2) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
-        if (!s1.equals(s2)) throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
-    }
-    /**
      * 断言两个对象一致
+     *
+     * @param o1 对象1
+     * @param o2 对象2
      */
-    public static void isEqualsObj(Object o1, Object o2) {
+    public static void isEquals(Object o1, Object o2) {
         isNotNull(o1);
         isNotNull(o2);
         if (!o1.equals(o2)) throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
     }
+    
     /**
      * 断言两个对象一致
+     *
+     * @param o1        对象1
+     * @param o2        对象2
+     * @param errorCode 错误码
      */
-    public static void isEqualsObj(Object o1, Object o2,GlobalErrorCode errorCode) {
+    public static void isEquals(Object o1, Object o2, GlobalErrorCode errorCode) {
         isNotNull(o1);
         isNotNull(o2);
         if (!o1.equals(o2)) throwGlobalCustomException(errorCode);
@@ -143,8 +145,8 @@ public class VerificationUtils {
      * @param s2 第二个字符串
      */
     public static void isEqualsTrim(String s1, String s2) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
+        isHasLength(s1);
+        isHasLength(s2);
         if (!s1.trim().equals(s2.trim())) throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
     }
     
@@ -155,8 +157,8 @@ public class VerificationUtils {
      * @param s2 第二个字符串
      */
     public static void isEqualsIgnoreCase(String s1, String s2) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
+        isHasLength(s1);
+        isHasLength(s2);
         if (!s1.trim().equalsIgnoreCase(s2.trim()))
             throwGlobalCustomException(GlobalErrorCode.SERVICE_PARAM_IS_NOT_EQUALS);
     }
@@ -166,7 +168,7 @@ public class VerificationUtils {
      *
      * @param list 集合
      */
-    public static <T> void listIsNull(List<T> list) {
+    public static <T> void isNotHasLength(List<T> list) {
         if (list == null) return;
         else if (list.size() != 0) throwGlobalCustomException(GlobalErrorCode.SERVICE_LIST_IS_NOT_NULL);
     }
@@ -176,7 +178,7 @@ public class VerificationUtils {
      *
      * @param list 集合
      */
-    public static <T> void listIsNotNull(List<T> list) {
+    public static <T> void isHasLength(List<T> list) {
         if (list == null || list.size() == 0) throwGlobalCustomException(GlobalErrorCode.SERVICE_LIST_IS_NULL);
     }
     
@@ -204,7 +206,7 @@ public class VerificationUtils {
      *
      * @param text 字符串
      */
-    public static void isNotEmpty(String text, GlobalErrorCode errorCode) {
+    public static void isHasLength(String text, GlobalErrorCode errorCode) {
         if (text == null || text.trim().length() == 0) throwGlobalCustomException(errorCode);
     }
     
@@ -245,26 +247,14 @@ public class VerificationUtils {
     }
     
     /**
-     * 断言两个字符串一致
-     *
-     * @param s1 第一个字符串
-     * @param s2 第二个字符串
-     */
-    public static void isEquals(String s1, String s2, GlobalErrorCode errorCode) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
-        if (!s1.equals(s2)) throwGlobalCustomException(errorCode);
-    }
-    
-    /**
      * 断言两个字符串一致，去空格
      *
      * @param s1 第一个字符串
      * @param s2 第二个字符串
      */
     public static void isEqualsTrim(String s1, String s2, GlobalErrorCode errorCode) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
+        isHasLength(s1);
+        isHasLength(s2);
         if (!s1.trim().equals(s2.trim())) throwGlobalCustomException(errorCode);
     }
     
@@ -275,8 +265,8 @@ public class VerificationUtils {
      * @param s2 第二个字符串
      */
     public static void isEqualsIgnoreCase(String s1, String s2, GlobalErrorCode errorCode) {
-        isNotEmpty(s1);
-        isNotEmpty(s2);
+        isHasLength(s1);
+        isHasLength(s2);
         if (!s1.trim().equalsIgnoreCase(s2.trim())) throwGlobalCustomException(errorCode);
     }
     
@@ -285,7 +275,7 @@ public class VerificationUtils {
      *
      * @param list 集合
      */
-    public static <T> void listIsNull(List<T> list, GlobalErrorCode errorCode) {
+    public static <T> void isNotHasLength(List<T> list, GlobalErrorCode errorCode) {
         if (list == null) return;
         else if (list.size() != 0) throwGlobalCustomException(errorCode);
     }
@@ -295,7 +285,7 @@ public class VerificationUtils {
      *
      * @param list 集合
      */
-    public static <T> void listIsNotNull(List<T> list, GlobalErrorCode errorCode) {
+    public static <T> void isHasLength(List<T> list, GlobalErrorCode errorCode) {
         if (list == null || list.size() == 0) throwGlobalCustomException(errorCode);
     }
     
@@ -306,7 +296,18 @@ public class VerificationUtils {
      * @param newDate   新时间
      * @param errorCode 错误码
      */
-    public static void timeIsBefore(Date oldDate, Date newDate, GlobalErrorCode errorCode) {
+    public static void isTimeBefore(Date oldDate, Date newDate, GlobalErrorCode errorCode) {
         if (oldDate.after(newDate)) throwGlobalCustomException(errorCode);
+    }
+    
+    /**
+     * 断言时间在之前
+     *
+     * @param oldDate   旧时间
+     * @param newDate   新时间
+     * @param errorCode 错误码
+     */
+    public static void isTimeAfter(Date oldDate, Date newDate, GlobalErrorCode errorCode) {
+        if (oldDate.before(newDate)) throwGlobalCustomException(errorCode);
     }
 }

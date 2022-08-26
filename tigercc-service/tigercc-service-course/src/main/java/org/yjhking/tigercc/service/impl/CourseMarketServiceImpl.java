@@ -28,8 +28,8 @@ public class CourseMarketServiceImpl extends ServiceImpl<CourseMarketMapper, Cou
     public boolean save(CourseDto dto) {
         CourseMarket courseMarket = dto.getCourseMarket();
         if (Objects.equals(courseMarket.getCharge(), NumberConstants.TWO)) {
-            VerificationUtils.isNotEmpty(String.valueOf(courseMarket.getPrice()), GlobalErrorCode.COURSE_PRICE_IS_NULL);
-            VerificationUtils.isNotEmpty(String.valueOf(courseMarket.getPriceOld())
+            VerificationUtils.isHasLength(String.valueOf(courseMarket.getPrice()), GlobalErrorCode.COURSE_PRICE_IS_NULL);
+            VerificationUtils.isHasLength(String.valueOf(courseMarket.getPriceOld())
                     , GlobalErrorCode.COURSE_PRICE_IS_NULL);
         } else {
             courseMarket.setPrice(BigDecimal.valueOf(0));

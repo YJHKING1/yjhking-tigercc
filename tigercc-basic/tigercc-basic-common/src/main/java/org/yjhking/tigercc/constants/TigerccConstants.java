@@ -34,4 +34,9 @@ public class TigerccConstants {
     public static final String GRADE_NAME = "gradeName";
     public static final String CHARGE_NAME_AGG = "chargeNameAgg";
     public static final String CHARGE_NAME = "chargeName";
+    public static final String SEPARATOR = ",";
+    public static final String ORDER_BUY = "购买：";
+    public static final String ORDER_PAY = "支付：";
+    public static final String ORDER_YUAN = "元";
+    public static final String SEMICOLON = "；";
 }

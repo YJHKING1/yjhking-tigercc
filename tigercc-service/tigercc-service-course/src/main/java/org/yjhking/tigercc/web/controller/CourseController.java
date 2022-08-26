@@ -91,4 +91,8 @@ public class CourseController {
     public JsonResult selectCourseStatusForUser(@PathVariable("id") Long id){
         return courseService.selectCourseStatusForUser(id);
     }
+    @GetMapping("/info/{courseIds}")
+    public JsonResult selectCourseDataForOrder(@PathVariable("courseIds") String courseIds){
+        return courseService.selectCourseDataForOrder(courseIds);
+    }
 }

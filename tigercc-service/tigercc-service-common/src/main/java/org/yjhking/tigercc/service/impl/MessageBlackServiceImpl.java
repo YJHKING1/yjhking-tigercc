@@ -57,7 +57,7 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
     private void repeatCheck(String ip, String phone) {
         List<MessageBlack> list = selectList(new EntityWrapper<MessageBlack>().eq(RedisConstants.IP, ip)
                 .or().eq(RedisConstants.PHONE, phone));
-        VerificationUtils.listIsNull(list, GlobalErrorCode.COMMON_VERIFICATION_BLACK);
+        VerificationUtils.isNotHasLength(list, GlobalErrorCode.COMMON_VERIFICATION_BLACK);
     }
     
     @Override
@@ -68,11 +68,11 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
         List<MessageSms> messageSmsList = messageSmsService
                 .selectList(new EntityWrapper<MessageSms>().eq(RedisConstants.PHONE, phone));
         MessageSms messageSms = null;
-        if (VerificationUtils.listVerification(messageSmsList))
+        if (VerificationUtils.hasLength(messageSmsList))
             messageSms = messageSmsList.get(messageSmsList.size() - NumberConstants.ONE);
         EntityWrapper<MessageBlack> query = new EntityWrapper<>();
         // 根据ip或手机及userId查找数据库
-        if (VerificationUtils.objectVerification(messageSms)) query.eq(RedisConstants.IP, ip)
+        if (VerificationUtils.isValid(messageSms)) query.eq(RedisConstants.IP, ip)
                 .or().eq(RedisConstants.PHONE, phone).or().eq(TigerccConstants.USER_ID, messageSms.getUserId());
             // 根据ip或手机查找数据库
         else query.eq(RedisConstants.IP, ip).or().eq(RedisConstants.PHONE, phone);

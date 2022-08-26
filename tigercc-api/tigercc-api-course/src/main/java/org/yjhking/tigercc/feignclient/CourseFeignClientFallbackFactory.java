@@ -17,6 +17,11 @@ public class CourseFeignClientFallbackFactory implements FallbackFactory<CourseF
             public JsonResult selectCourseStatusForUser(Long id) {
                 return JsonResult.error();
             }
+    
+            @Override
+            public JsonResult selectCourseDataForOrder(String courseIds) {
+                return JsonResult.error();
+            }
         };
     }
 }

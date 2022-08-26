@@ -12,4 +12,6 @@ import org.yjhking.tigercc.result.JsonResult;
 public interface CourseFeignClient {
     @GetMapping("/course/selectCourse/{id}")
     public JsonResult selectCourseStatusForUser(@PathVariable("id") Long id);
+    @GetMapping("/course/info/{courseIds}")
+    public JsonResult selectCourseDataForOrder(@PathVariable("courseIds") String courseIds);
 }

@@ -3,7 +3,6 @@ package org.yjhking.tigercc.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.BeanUtils;
@@ -26,14 +25,15 @@ import org.yjhking.tigercc.feignclient.SearchFeignClient;
 import org.yjhking.tigercc.mapper.CourseMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.*;
+import org.yjhking.tigercc.utils.StrUtils;
 import org.yjhking.tigercc.utils.VerificationUtils;
 import org.yjhking.tigercc.vo.CourseDataForDetailVO;
+import org.yjhking.tigercc.vo.CourseDataOrderVo;
+import org.yjhking.tigercc.vo.CourseItemDataOrderVo;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -146,7 +146,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Course course = selectById(id);
         VerificationUtils.isNotNull(course, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 判断课程是否上线
-        VerificationUtils.isEqualsObj(course.getStatus(), Course.STATUS_ONLINE
+        VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE
                 , GlobalErrorCode.COURSE_IS_NOT_ONLINE);
         // 查询并返回
         return JsonResult.success(new CourseDataForDetailVO(course, courseMarketService.selectById(id)
@@ -169,13 +169,38 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         // todo 假数据
         Long loginId = 3L;
         // 是否上线
-        VerificationUtils.isEqualsObj(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
         // 判断是否免费
-        if (VerificationUtils.equalsVer(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
+        if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
             return JsonResult.success(new CourseStatus());
         // 是否购买
         VerificationUtils.isNotNull(selectByUserIdAndCourseId(loginId, courseId), GlobalErrorCode.COURSE_IS_NOT_BUY);
         return JsonResult.success(new CourseStatus());
+    }
+    
+    @Override
+    public JsonResult selectCourseDataForOrder(String courseIds) {
+        VerificationUtils.isHasLength(courseIds, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 分割id并查询课程
+        List<Long> courseIdsList = StrUtils.splitStr2LongArr(courseIds, TigerccConstants.SEPARATOR);
+        List<Course> courses = selectBatchIds(courseIdsList);
+        VerificationUtils.isNotNull(courses,GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        VerificationUtils.isEquals(courses.size(),courseIdsList.size(),GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 批量查询营销
+        Map<Long, CourseMarket> courseMarketsMap = courseMarketService.selectBatchIds(courseIdsList).stream()
+                .collect(Collectors.toMap(CourseMarket::getId, CourseMarket -> CourseMarket));
+        // 课程详情列表
+        List<CourseItemDataOrderVo> itemVos = new ArrayList<>(courseIdsList.size());
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Course course : courses) {
+            CourseMarket courseMarket = courseMarketsMap.get(course.getId());
+            VerificationUtils.isEquals(course.getStatus(),Course.STATUS_ONLINE,GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+            VerificationUtils.isEquals(courseMarket.getCharge(),CourseMarket.CHARGE_UN_FREE
+                    ,GlobalErrorCode.COURSE_IS_FREE);
+            itemVos.add(new CourseItemDataOrderVo(course, courseMarket));
+            totalAmount = totalAmount.add(courseMarket.getPrice());
+        }
+        return JsonResult.success(new CourseDataOrderVo(itemVos, totalAmount));
     }
     
     /**
@@ -199,7 +224,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
              mediaFile.setFileUrl("");
             CourseChapter courseChapter = courseChapters.stream().collect(Collectors.toMap(CourseChapter::getId
                     , CourseChapter -> CourseChapter)).get(mediaFile.getChapterId());
-            if (VerificationUtils.objectVerification(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);
+            if (VerificationUtils.isValid(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);
         });
         return courseChapters;
     }
@@ -257,10 +282,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     private void verify(CourseDto dto) {
         // 课程名重复校验
-        VerificationUtils.listIsNull(selectList(new EntityWrapper<Course>()
+        VerificationUtils.isNotHasLength(selectList(new EntityWrapper<Course>()
                 .eq(RedisConstants.NAME, dto.getCourse().getName())), GlobalErrorCode.COURSE_NAME_REPEAT);
         // 校验课程时间
-        VerificationUtils.timeIsBefore(dto.getCourse().getStartTime(), dto.getCourse().getEndTime()
+        VerificationUtils.isTimeBefore(dto.getCourse().getStartTime(), dto.getCourse().getEndTime()
                 , GlobalErrorCode.COURSE_TIME_ERROR);
     }
 }

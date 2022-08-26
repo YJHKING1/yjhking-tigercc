@@ -77,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String phoneCode = redisTemplate.opsForValue()
                 .get(RedisConstants.REGISTER_CODE_PREFIX + dto.getMobile());
         // 过期校验
-        VerificationUtils.isNotEmpty(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
+        VerificationUtils.isHasLength(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
         // 正确校验
         VerificationUtils.isEqualsTrim(RedisUtils.getSmsCode(phoneCode)
                 , dto.getSmsCode(), GlobalErrorCode.COMMON_PHONE_VERIFICATION_ERROR);

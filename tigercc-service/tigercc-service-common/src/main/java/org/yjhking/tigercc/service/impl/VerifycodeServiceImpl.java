@@ -75,7 +75,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
     @Override
     public JsonResult imageCode(String key) {
         // 判断UUID不为空
-        VerificationUtils.isNotEmpty(key, GlobalErrorCode.COMMON_IMG_VERIFICATION_NULL);
+        VerificationUtils.isHasLength(key, GlobalErrorCode.COMMON_IMG_VERIFICATION_NULL);
         // 生成随机验证码
         String code = VerifyCodeUtils.generateVerifyCode(imgProperties.getLength());
         // 把验证码的值存储到Redis,以前台传入的UUID作为key
@@ -97,7 +97,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
         blackVerification(mobileCodeDto);
         String imageCodeKey = redisTemplate.opsForValue().get(mobileCodeDto.getImageCodeKey());
         // 判断图片验证码是否过期
-        VerificationUtils.isNotEmpty(imageCodeKey, GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
+        VerificationUtils.isHasLength(imageCodeKey, GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
         // 判断图片验证码是否正确
         VerificationUtils.isEqualsIgnoreCase(imageCodeKey, mobileCodeDto.getImageCode()
                 , GlobalErrorCode.COMMON_IMG_VERIFICATION_ERROR);
@@ -114,7 +114,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
                 .get(RedisConstants.REGISTER_CODE_PREFIX + mobileCodeDto.getMobile());
         String code;
         // 校验是否过期
-        if (VerificationUtils.stringVerification(codeString)) {
+        if (VerificationUtils.hasLength(codeString)) {
             // 获取时间
             String time = RedisUtils.getSmsCodeTime(codeString);
             long intervalTime = System.currentTimeMillis() - Long.parseLong(time);

@@ -3,6 +3,7 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.CourseOrder;
+import org.yjhking.tigercc.dto.PlaceOrderDto;
 import org.yjhking.tigercc.query.CourseOrderQuery;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
@@ -65,5 +66,10 @@ public class CourseOrderController {
         Page<CourseOrder> page = new Page<CourseOrder>(query.getPage(), query.getRows());
         page = courseOrderService.selectPage(page);
         return JsonResult.success(new PageList<CourseOrder>(page.getTotal(), page.getRecords()));
+    }
+    
+    @PostMapping("/placeOrder")
+    public JsonResult placeOrder(@RequestBody PlaceOrderDto dto) {
+        return courseOrderService.placeOrder(dto);
     }
 }

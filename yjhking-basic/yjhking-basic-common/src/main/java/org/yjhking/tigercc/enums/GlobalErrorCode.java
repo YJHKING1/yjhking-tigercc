@@ -62,13 +62,18 @@ public enum GlobalErrorCode {
     COURSE_ID_IS_NULL("60005", "课程ID不能为空！"),
     COURSE_IS_NULL("60006", "课程为空！"),
     COURSE_IS_NOT_BUY("60007", "课程未购买！"),
+    COURSE_IS_FREE("60008", "课程免费！"),
     
     // search服务异常：700xx
     SEARCH_ERROR("70000", "搜索服务异常！"),
     
     // media服务异常：800xx
     MEDIA_ERROR("80000", "媒体服务异常！"),
-    MEDIA_LIST_NULL("80001", "视频列表加载失败！");
+    MEDIA_LIST_NULL("80001", "视频列表加载失败！"),
+    
+    // order服务异常：900xx
+    ORDER_ERROR("90000", "订单服务异常！"),
+    ORDER_REPEAT("90001", "订单重复提交，或下单超时！");
     
     // 异常码
     private String code;

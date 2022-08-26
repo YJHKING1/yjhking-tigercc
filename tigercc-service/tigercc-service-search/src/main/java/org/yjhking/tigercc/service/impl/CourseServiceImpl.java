@@ -2,8 +2,6 @@ package org.yjhking.tigercc.service.impl;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -14,7 +12,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.ESConstants;
 import org.yjhking.tigercc.constants.NumberConstants;
-import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.doc.CourseDoc;
 import org.yjhking.tigercc.dto.SearchDto;
 import org.yjhking.tigercc.mapper.HighlightResultMapper;
@@ -29,7 +26,6 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author YJH
@@ -49,7 +45,7 @@ public class CourseServiceImpl implements CourseService {
         NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder().withPageable(PageRequest.of(
                 searchDto.getPage() - NumberConstants.ONE, searchDto.getRows()));
         // 排序
-        if (VerificationUtils.stringVerification(searchDto.getSortField()))
+        if (VerificationUtils.hasLength(searchDto.getSortField()))
             builder.withSort(new FieldSortBuilder(getSortFieldName(searchDto.getSortField()))
                     .order(getSortOrder(searchDto.getSortType())));
         // 条件
@@ -58,21 +54,21 @@ public class CourseServiceImpl implements CourseService {
         builder.withHighlightFields(new HighlightBuilder.Field(ESConstants.NAME)
                 .preTags(ESConstants.PRE_TAGS).postTags(ESConstants.POST_TAGS));
         // 聚合
-        builder.addAggregation(AggregationBuilders.terms(TigerccConstants.GRADE_NAME_AGG)
+        /*builder.addAggregation(AggregationBuilders.terms(TigerccConstants.GRADE_NAME_AGG)
                         .field(TigerccConstants.GRADE_NAME))
                 .addAggregation(AggregationBuilders.terms(TigerccConstants.CHARGE_NAME_AGG)
-                        .field(TigerccConstants.CHARGE_NAME));
+                        .field(TigerccConstants.CHARGE_NAME));*/
         // 查询
         // Page<CourseDoc> search = courseESRepository.search(builder.build());
         AggregatedPage<CourseDoc> courseDocs = elasticsearchRestTemplate.queryForPage(
                 builder.build(), CourseDoc.class, highlightResultMapper);
         // 聚合结果
         Map<String, List<BucketVO>> aggResultMap = new HashMap<>();
-        courseDocs.getAggregations().asMap().forEach((aggName, agg) ->
+        /*courseDocs.getAggregations().asMap().forEach((aggName, agg) ->
                 aggResultMap.put(aggName, ((ParsedStringTerms) agg).getBuckets().stream().map(bucket ->
-                        new BucketVO(bucket.getKeyAsString(), bucket.getDocCount())).collect(Collectors.toList())));
+                        new BucketVO(bucket.getKeyAsString(), bucket.getDocCount())).collect(Collectors.toList())));*/
         return JsonResult.success(
-                new AggPageList<>(courseDocs.getTotalElements(), courseDocs.getContent(), aggResultMap));
+                new AggPageList<>(courseDocs.getTotalElements(), courseDocs.getContent(), null));
     }
     
     /**
@@ -106,17 +102,17 @@ public class CourseServiceImpl implements CourseService {
      */
     private BoolQueryBuilder queryBuilder(SearchDto searchDto) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        if (VerificationUtils.stringVerification(searchDto.getKeyword()))
+        if (VerificationUtils.hasLength(searchDto.getKeyword()))
             boolQueryBuilder.must(QueryBuilders.matchQuery(ESConstants.NAME, searchDto.getKeyword()));
-        if (VerificationUtils.stringVerification(searchDto.getGradeName()))
+        if (VerificationUtils.hasLength(searchDto.getGradeName()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.GRADE_NAME, searchDto.getGradeName()));
-        if (VerificationUtils.objectVerification(searchDto.getCourseTypeId()))
+        if (VerificationUtils.isValid(searchDto.getCourseTypeId()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.COURSE_TYPE_ID, searchDto.getCourseTypeId()));
-        if (VerificationUtils.stringVerification(searchDto.getChargeName()))
+        if (VerificationUtils.hasLength(searchDto.getChargeName()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.CHARGE_NAME, searchDto.getChargeName()));
-        if (VerificationUtils.objectVerification(searchDto.getPriceMax()))
+        if (VerificationUtils.isValid(searchDto.getPriceMax()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.PRICE, searchDto.getPriceMax()));
-        if (VerificationUtils.objectVerification(searchDto.getPriceMin()))
+        if (VerificationUtils.isValid(searchDto.getPriceMin()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.PRICE, searchDto.getPriceMin()));
         return boolQueryBuilder;
     }
