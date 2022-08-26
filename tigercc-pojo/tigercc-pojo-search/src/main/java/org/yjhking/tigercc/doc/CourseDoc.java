@@ -25,6 +25,9 @@ public class CourseDoc {
     @Field(type = FieldType.Keyword)
     private String gradeName;
     
+    @Field(type = FieldType.Keyword)
+    private String chargeName;
+    
     @Field(type = FieldType.Long)
     private Long courseTypeId;
     

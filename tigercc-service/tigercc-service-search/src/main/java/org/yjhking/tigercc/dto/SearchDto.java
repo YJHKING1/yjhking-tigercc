@@ -13,10 +13,8 @@ import java.math.BigDecimal;
  */
 @Data
 public class SearchDto extends BaseQuery {
-    @Field(type = FieldType.Keyword)
     private String chargeName;
     private Long courseTypeId;
-    @Field(type = FieldType.Keyword)
     private String gradeName;
     private BigDecimal priceMax;
     private BigDecimal priceMin;

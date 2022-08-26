@@ -58,21 +58,21 @@ public class CourseServiceImpl implements CourseService {
         builder.withHighlightFields(new HighlightBuilder.Field(ESConstants.NAME)
                 .preTags(ESConstants.PRE_TAGS).postTags(ESConstants.POST_TAGS));
         // 聚合
-        /*builder.addAggregation(AggregationBuilders.terms(TigerccConstants.GRADE_NAME_AGG)
+        builder.addAggregation(AggregationBuilders.terms(TigerccConstants.GRADE_NAME_AGG)
                         .field(TigerccConstants.GRADE_NAME))
                 .addAggregation(AggregationBuilders.terms(TigerccConstants.CHARGE_NAME_AGG)
-                        .field(TigerccConstants.CHARGE_NAME));*/
+                        .field(TigerccConstants.CHARGE_NAME));
         // 查询
         // Page<CourseDoc> search = courseESRepository.search(builder.build());
         AggregatedPage<CourseDoc> courseDocs = elasticsearchRestTemplate.queryForPage(
                 builder.build(), CourseDoc.class, highlightResultMapper);
         // 聚合结果
-        /*Map<String, List<BucketVO>> aggResultMap = new HashMap<>();
+        Map<String, List<BucketVO>> aggResultMap = new HashMap<>();
         courseDocs.getAggregations().asMap().forEach((aggName, agg) ->
                 aggResultMap.put(aggName, ((ParsedStringTerms) agg).getBuckets().stream().map(bucket ->
-                        new BucketVO(bucket.getKeyAsString(), bucket.getDocCount())).collect(Collectors.toList())));*/
+                        new BucketVO(bucket.getKeyAsString(), bucket.getDocCount())).collect(Collectors.toList())));
         return JsonResult.success(
-                new AggPageList<>(courseDocs.getTotalElements(), courseDocs.getContent(), null));
+                new AggPageList<>(courseDocs.getTotalElements(), courseDocs.getContent(), aggResultMap));
     }
     
     /**
