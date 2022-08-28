@@ -1,9 +1,12 @@
 package org.yjhking.tigercc.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
@@ -12,6 +15,7 @@ import org.yjhking.tigercc.domain.Course;
 import org.yjhking.tigercc.domain.CourseMarket;
 import org.yjhking.tigercc.domain.CourseOrder;
 import org.yjhking.tigercc.domain.CourseOrderItem;
+import org.yjhking.tigercc.dto.PayOrder2MQDto;
 import org.yjhking.tigercc.dto.PlaceOrderDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.feignclient.CourseFeignClient;
@@ -46,6 +50,8 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     private CourseFeignClient courseFeignClient;
     @Resource
     private ICourseOrderItemService orderItemService;
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
     
     @Override
     public JsonResult placeOrder(PlaceOrderDto dto) {
@@ -102,15 +108,25 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         courseOrder.setTitle(stringBuilder.toString());
         courseOrder.setTotalCount(totalCount);
         courseOrder.setUserId(loginId);
-        insert(courseOrder);
-        // 保存明细
-        items.forEach(item -> item.setOrderId(courseOrder.getId()));
-        orderItemService.insertBatch(items);
+        courseOrder.setItems(items);
+        // 保存订单
+        rocketMQTemplate.sendMessageInTransaction(TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION,
+                "topic_payorder:tags-payorder", MessageBuilder.withPayload(JSON.toJSONString(
+                        new PayOrder2MQDto(courseOrder.getPayAmount(), courseOrder.getPayType(), orderSn, loginId
+                                , "", courseOrder.getTitle()))).build(), courseOrder);
         return JsonResult.success();
     }
     
     @Override
     public void saveOrderAndItem(CourseOrder courseOrder) {
+        VerificationUtils.isNull(selectByOrderNo(courseOrder.getOrderNo()), GlobalErrorCode.ORDER_EXIST);
+        insert(courseOrder);
+        // 保存明细
+        courseOrder.getItems().forEach(item -> item.setOrderId(courseOrder.getId()));
+        orderItemService.insertBatch(courseOrder.getItems());
+    }
     
+    public CourseOrder selectByOrderNo(String orderNo) {
+        return selectOne(new EntityWrapper<CourseOrder>().eq(CourseOrder.ORDER_NO, orderNo));
     }
 }

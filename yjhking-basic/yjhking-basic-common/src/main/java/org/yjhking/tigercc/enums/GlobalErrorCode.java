@@ -75,7 +75,8 @@ public enum GlobalErrorCode {
     
     // order服务异常：900xx
     ORDER_ERROR("90000", "订单服务异常！"),
-    ORDER_REPEAT("90001", "订单重复提交，或下单超时！");
+    ORDER_REPEAT("90001", "订单重复提交，或下单超时！"),
+    ORDER_EXIST("90002", "订单已存在！");
     
     // 异常码
     private String code;

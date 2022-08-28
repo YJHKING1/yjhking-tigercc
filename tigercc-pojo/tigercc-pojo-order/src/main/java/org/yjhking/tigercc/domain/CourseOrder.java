@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -19,6 +22,7 @@ import java.util.Date;
  * @since 2022-08-16
  */
 @TableName("t_course_order")
+@Data
 public class CourseOrder extends Model<CourseOrder> {
     
     private static final long serialVersionUID = 1L;
@@ -38,6 +42,7 @@ public class CourseOrder extends Model<CourseOrder> {
      * 超时自动取消订单
      */
     public static final int STATE_AUTO_CANCEL = 3;
+    public static final String ORDER_NO = "order_no";
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**
@@ -105,142 +110,11 @@ public class CourseOrder extends Model<CourseOrder> {
      */
     @TableField("order_type")
     private Integer orderType;
-    
-    
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public Date getCreateTime() {
-        return createTime;
-    }
-    
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-    
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-    
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-    
-    public String getOrderNo() {
-        return orderNo;
-    }
-    
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
-    
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-    
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-    
-    public BigDecimal getPayAmount() {
-        return payAmount;
-    }
-    
-    public void setPayAmount(BigDecimal payAmount) {
-        this.payAmount = payAmount;
-    }
-    
-    public BigDecimal getDiscountAmount() {
-        return discountAmount;
-    }
-    
-    public void setDiscountAmount(BigDecimal discountAmount) {
-        this.discountAmount = discountAmount;
-    }
-    
-    public Integer getTotalCount() {
-        return totalCount;
-    }
-    
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
-    
-    public Integer getStatusOrder() {
-        return statusOrder;
-    }
-    
-    public void setStatusOrder(Integer statusOrder) {
-        this.statusOrder = statusOrder;
-    }
-    
-    public Long getUserId() {
-        return userId;
-    }
-    
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    public Integer getVersion() {
-        return version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-    
-    public Integer getPayType() {
-        return payType;
-    }
-    
-    public void setPayType(Integer payType) {
-        this.payType = payType;
-    }
-    
-    public Integer getOrderType() {
-        return orderType;
-    }
-    
-    public void setOrderType(Integer orderType) {
-        this.orderType = orderType;
-    }
+    @TableField(exist = false)
+    private List<CourseOrderItem> items = new ArrayList<>();
     
     @Override
     protected Serializable pkVal() {
         return this.id;
-    }
-    
-    @Override
-    public String toString() {
-        return "CourseOrder{" +
-                ", id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", orderNo=" + orderNo +
-                ", totalAmount=" + totalAmount +
-                ", payAmount=" + payAmount +
-                ", discountAmount=" + discountAmount +
-                ", totalCount=" + totalCount +
-                ", statusOrder=" + statusOrder +
-                ", userId=" + userId +
-                ", title=" + title +
-                ", version=" + version +
-                ", payType=" + payType +
-                ", orderType=" + orderType +
-                "}";
     }
 }
