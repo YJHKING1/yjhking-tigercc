@@ -8,6 +8,7 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.constants.TigerccConstants;
@@ -111,7 +112,7 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         courseOrder.setItems(items);
         // 保存订单
         rocketMQTemplate.sendMessageInTransaction(TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION,
-                "topic_payorder:tags-payorder", MessageBuilder.withPayload(JSON.toJSONString(
+                MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER, MessageBuilder.withPayload(JSON.toJSONString(
                         new PayOrder2MQDto(courseOrder.getPayAmount(), courseOrder.getPayType(), orderSn, loginId
                                 , "", courseOrder.getTitle()))).build(), courseOrder);
         return JsonResult.success();
