@@ -70,6 +70,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private ICourseChapterService chapterService;
     @Resource
     private MediaFeignClient mediaFeignClient;
+    @Resource
+    private ICourseRecommendService courseRecommendService;
     
     @Transactional
     @Override
@@ -140,6 +142,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     public JsonResult offLineCourse(Long id) {
         VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
         searchFeignClient.deleteCourse(id2CourseDoc(id, NumberConstants.ZERO));
+        // 取消课程推荐
+        courseRecommendService.saveOff(id);
         return JsonResult.success();
     }
     
@@ -206,6 +210,20 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             totalAmount = totalAmount.add(courseMarket.getPrice());
         }
         return JsonResult.success(new CourseDataOrderVo(itemVos, totalAmount));
+    }
+    
+    @Override
+    public JsonResult recommendOn(Long id) {
+        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        courseRecommendService.saveOn(id);
+        return JsonResult.success();
+    }
+    
+    @Override
+    public JsonResult recommendOff(Long id) {
+        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        courseRecommendService.saveOff(id);
+        return JsonResult.success();
     }
     
     /**

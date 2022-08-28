@@ -42,7 +42,7 @@ public class GenteratorCode {
         strategy.setTablePrefix("t_");// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         strategy.setInclude(
-                "t_message_black"
+                "t_course_recommend"
         ); // 需要生成的表
         mpg.setStrategy(strategy);
         // 包配置

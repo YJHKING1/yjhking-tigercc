@@ -16,4 +16,6 @@ import org.yjhking.tigercc.result.JsonResult;
 public interface ICourseOrderService extends IService<CourseOrder> {
     
     JsonResult placeOrder(PlaceOrderDto dto);
+    
+    void saveOrderAndItem(CourseOrder courseOrder);
 }

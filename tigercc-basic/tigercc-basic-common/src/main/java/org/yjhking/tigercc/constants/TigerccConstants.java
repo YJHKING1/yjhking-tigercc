@@ -6,6 +6,7 @@ package org.yjhking.tigercc.constants;
  * @author YJH
  */
 public class TigerccConstants {
+    public static final String ID = "id";
     public static final String COURSE_ID = "course_id";
     public static final String LOGIN_ID = "login_id";
     public static final String STATE = "state";
@@ -39,4 +40,6 @@ public class TigerccConstants {
     public static final String ORDER_PAY = "支付：";
     public static final String ORDER_YUAN = "元";
     public static final String SEMICOLON = "；";
+    public static final String MQ_COURSEORDER_PAY_GROUP_TRANSACTION = "mq_courseorder_pay_group_transaction";
+    public static final String TX_PAY_RESULT_GROUP = "tx_pay_result_group";
 }

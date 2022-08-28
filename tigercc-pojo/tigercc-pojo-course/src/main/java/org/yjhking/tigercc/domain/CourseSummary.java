@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @TableName("t_course_summary")
 public class CourseSummary extends Model<CourseSummary> {
-    
+    public static final String VIEW_COUNT = "view_count";
     private static final long serialVersionUID = 1L;
     
     private Long id;

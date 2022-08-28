@@ -22,7 +22,12 @@ public interface ICourseService extends IService<Course> {
     JsonResult offLineCourse(Long id);
     
     JsonResult selectCourseDataForDetail(Long id);
+    
     JsonResult selectCourseStatusForUser(Long id);
     
     JsonResult selectCourseDataForOrder(String courseIds);
+    
+    JsonResult recommendOn(Long id);
+    
+    JsonResult recommendOff(Long id);
 }

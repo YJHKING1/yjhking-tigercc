@@ -16,5 +16,4 @@ import org.yjhking.tigercc.service.IPayOrderService;
  */
 @Service
 public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implements IPayOrderService {
-
 }

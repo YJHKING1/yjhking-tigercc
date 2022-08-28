@@ -41,18 +41,19 @@ import java.util.List;
 @Service
 public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, CourseOrder> implements ICourseOrderService {
     @Resource
-    private RedisTemplate<Object,Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
     @Resource
     private CourseFeignClient courseFeignClient;
     @Resource
     private ICourseOrderItemService orderItemService;
+    
     @Override
     public JsonResult placeOrder(PlaceOrderDto dto) {
         // todo 假数据 用户id
         Long loginId = 3L;
         // 参数校验
         String courseIdStr = StringUtils.join(dto.getCourseIds(), TigerccConstants.SEPARATOR);
-        String token = (String)redisTemplate.opsForValue()
+        String token = (String) redisTemplate.opsForValue()
                 .get(RedisConstants.TOKEN + loginId + RedisConstants.REDIS_VERIFY + courseIdStr);
         VerificationUtils.isHasLength(token, GlobalErrorCode.ORDER_REPEAT);
         VerificationUtils.isEquals(token, dto.getToken(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
@@ -106,5 +107,10 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         items.forEach(item -> item.setOrderId(courseOrder.getId()));
         orderItemService.insertBatch(items);
         return JsonResult.success();
+    }
+    
+    @Override
+    public void saveOrderAndItem(CourseOrder courseOrder) {
+    
     }
 }

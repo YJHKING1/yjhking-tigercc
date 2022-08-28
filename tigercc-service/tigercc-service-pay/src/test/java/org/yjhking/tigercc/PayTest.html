@@ -1,0 +1,7 @@
+<form name="punchout_form" method="post"
+      action="https://openapi.alipaydev.com/gateway.do?alipay_sdk=alipay-easysdk-java-2.2.2&app_id=2021000121654430&charset=UTF-8&format=json&method=alipay.trade.page.pay&notify_url=http%3A%2F%2Flocalhost%3A10010%2Ftigercc%2Fpay%2Fpay%2Fnotify&return_url=http%3A%2F%2Fcourse.tigercc.com%3A6002%2Fpay.success.html&sign=UB73QBH1h8fAav1Vj%2FHewCLzi5NqLZBmBZIFY0NPsVAWZqPynYFrctjx%2BMPSYGOOWex%2B4u4v%2B8bqmEVRHAf822WzW9sUh3uiR5kvQVTL9%2Bf2SqJCx2H0S1ww3Vi0Itw0KQYPBLlvUxoL78vr1qQADLWZwKOLIuwCyAeANUYnMhIk3a4MWyGSTZnF3Jca76isE9%2FN61kWg6N8BlMXvt1fU%2FrA4B8YjkOcHlzedCojMU0JfhCki5ZshnL1%2BKHny5YEOQ9Lcb5RNGmqHv80w1JagakwUlVNMgqiVuL0jCMD3NWViTG9vhPdkfAU8FoDIe8CB4gnnzbPCfDLy%2Bfq41Edhg%3D%3D&sign_type=RSA2&timestamp=2022-08-28+16%3A26%3A42&version=1.0">
+    <input type="hidden" name="biz_content"
+           value="{&quot;out_trade_no&quot;:&quot;5243f27a-32c6-4e6e-b376-68f88589df39&quot;,&quot;total_amount&quot;:&quot;100.00&quot;,&quot;subject&quot;:&quot;我要花钱&quot;,&quot;product_code&quot;:&quot;FAST_INSTANT_TRADE_PAY&quot;}">
+    <input type="submit" value="立即支付" style="display:none">
+</form>
+<script>document.forms[0].submit();</script>

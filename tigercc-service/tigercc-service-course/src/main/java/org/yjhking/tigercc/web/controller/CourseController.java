@@ -83,16 +83,35 @@ public class CourseController {
     public JsonResult offLineCourse(@PathVariable("id") Long id) {
         return courseService.offLineCourse(id);
     }
+    
     @GetMapping("/detail/data/{id}")
     public JsonResult selectCourseDataForDetail(@PathVariable("id") Long id) {
         return courseService.selectCourseDataForDetail(id);
     }
+    
     @GetMapping("/selectCourse/{id}")
-    public JsonResult selectCourseStatusForUser(@PathVariable("id") Long id){
+    public JsonResult selectCourseStatusForUser(@PathVariable("id") Long id) {
         return courseService.selectCourseStatusForUser(id);
     }
+    
     @GetMapping("/info/{courseIds}")
-    public JsonResult selectCourseDataForOrder(@PathVariable("courseIds") String courseIds){
+    public JsonResult selectCourseDataForOrder(@PathVariable("courseIds") String courseIds) {
         return courseService.selectCourseDataForOrder(courseIds);
+    }
+    
+    /**
+     * 课程推荐
+     */
+    @GetMapping("/recommend/on/{id}")
+    public JsonResult recommendOn(@PathVariable Long id) {
+        return courseService.recommendOn(id);
+    }
+    
+    /**
+     * 取消课程推荐
+     */
+    @GetMapping("/recommend/off/{id}")
+    public JsonResult recommendOff(@PathVariable Long id) {
+        return courseService.recommendOff(id);
     }
 }

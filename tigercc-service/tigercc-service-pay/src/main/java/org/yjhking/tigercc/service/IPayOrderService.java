@@ -12,5 +12,4 @@ import org.yjhking.tigercc.domain.PayOrder;
  * @since 2022-08-16
  */
 public interface IPayOrderService extends IService<PayOrder> {
-
 }

@@ -24,6 +24,7 @@ public class Course extends Model<Course> {
     
     public static final Integer STATUS_ONLINE = 1;
     public static final Integer STATUS_NOT_ONLINE = 0;
+    public static final String STATUS = "status";
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)

@@ -63,6 +63,8 @@ public enum GlobalErrorCode {
     COURSE_IS_NULL("60006", "课程为空！"),
     COURSE_IS_NOT_BUY("60007", "课程未购买！"),
     COURSE_IS_FREE("60008", "课程免费！"),
+    COURSE_IS_OFF("60009", "课程已下架不可推荐！"),
+    COURSE_SUMMARY_IS_NULL("60010", "可推荐课程为空！"),
     
     // search服务异常：700xx
     SEARCH_ERROR("70000", "搜索服务异常！"),
