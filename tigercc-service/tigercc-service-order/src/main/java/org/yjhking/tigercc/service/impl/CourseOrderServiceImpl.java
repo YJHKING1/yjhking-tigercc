@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
+import org.apache.rocketmq.client.producer.LocalTransactionState;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
@@ -111,10 +114,19 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         courseOrder.setUserId(loginId);
         courseOrder.setItems(items);
         // 保存订单
-        rocketMQTemplate.sendMessageInTransaction(TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION,
-                MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER, MessageBuilder.withPayload(JSON.toJSONString(
-                        new PayOrder2MQDto(courseOrder.getPayAmount(), courseOrder.getPayType(), orderSn, loginId
-                                , "", courseOrder.getTitle()))).build(), courseOrder);
+        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction(
+                TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION, MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER
+                , MessageBuilder.withPayload(JSON.toJSONString(new PayOrder2MQDto(courseOrder.getPayAmount()
+                                , courseOrder.getPayType(), orderSn, loginId, "", courseOrder.getTitle())))
+                        .build(), courseOrder);
+        // 断言下单状态
+        VerificationUtils.isEquals(transactionSendResult.getLocalTransactionState()
+                , LocalTransactionState.COMMIT_MESSAGE, GlobalErrorCode.ORDER_MISS);
+        // 断言发送事务消息状态
+        VerificationUtils.isEquals(transactionSendResult.getSendStatus()
+                , SendStatus.SEND_OK, GlobalErrorCode.SERVICE_TRANSACTION_MESSAGE_FAILED);
+        // 删除token，防止重复提交
+        redisTemplate.delete(token);
         return JsonResult.success();
     }
     

@@ -26,6 +26,7 @@ public enum GlobalErrorCode {
     SERVICE_LIST_IS_NOT_NULL("10008", "集合不为空！"),
     SERVICE_LIST_IS_NULL("10009", "集合为空！"),
     SERVICE_ILLEGAL_REQUEST("10010", "非法请求！"),
+    SERVICE_TRANSACTION_MESSAGE_FAILED("10011", "发送事务消息失败！"),
     
     // system服务异常：200xx
     SYSTEM_ERROR("20000", "系统服务异常！"),
@@ -76,7 +77,8 @@ public enum GlobalErrorCode {
     // order服务异常：900xx
     ORDER_ERROR("90000", "订单服务异常！"),
     ORDER_REPEAT("90001", "订单重复提交，或下单超时！"),
-    ORDER_EXIST("90002", "订单已存在！");
+    ORDER_EXIST("90002", "订单已存在！"),
+    ORDER_MISS("90003", "下单失败！");
     
     // 异常码
     private String code;

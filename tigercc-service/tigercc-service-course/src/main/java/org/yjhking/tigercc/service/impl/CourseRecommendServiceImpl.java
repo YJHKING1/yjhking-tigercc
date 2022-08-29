@@ -2,6 +2,9 @@ package org.yjhking.tigercc.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.constants.NumberConstants;
 import org.yjhking.tigercc.constants.TigerccConstants;
@@ -38,6 +41,9 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
     public static final Boolean DESC = false;
     
     @Override
+    @Caching(evict = {@CacheEvict(value = TigerccConstants.COURSE_RECOMMENDATION_KEY
+            , key = TigerccConstants.COURSE_RECOMMENDATION_LIST), @CacheEvict(
+            value = TigerccConstants.HOT_RECOMMENDATION_KEY, key = TigerccConstants.HOT_RECOMMENDATION_LIST)})
     public void saveOn(Long id) {
         // 校验课程是否上架
         VerificationUtils.isNotNull(courseService.selectOne(new EntityWrapper<Course>().eq(TigerccConstants.ID, id)
@@ -48,6 +54,9 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
     }
     
     @Override
+    @Caching(evict = {@CacheEvict(value = TigerccConstants.COURSE_RECOMMENDATION_KEY
+            , key = TigerccConstants.COURSE_RECOMMENDATION_LIST), @CacheEvict(
+            value = TigerccConstants.HOT_RECOMMENDATION_KEY, key = TigerccConstants.HOT_RECOMMENDATION_LIST)})
     public void saveOff(Long id) {
         // 取消推荐
         if (VerificationUtils.isValid(selectById(id))) updateById(new CourseRecommend(id, CourseRecommend.STATE_OFF));
@@ -55,7 +64,8 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
     }
     
     @Override
-    public Object selectAll() {
+    @Cacheable(value = TigerccConstants.COURSE_RECOMMENDATION_KEY, key = TigerccConstants.COURSE_RECOMMENDATION_LIST)
+    public List<CourseRecommendVo> selectAll() {
         // 查询所有激活推荐课程id
         List<Long> ids = selectList(new EntityWrapper<CourseRecommend>().eq(CourseRecommend.STATE
                 , CourseRecommend.STATE_ON)).stream().map(CourseRecommend::getId).collect(Collectors.toList());
@@ -69,7 +79,8 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
     }
     
     @Override
-    public Object selectHot() {
+    @Cacheable(value = TigerccConstants.HOT_RECOMMENDATION_KEY, key = TigerccConstants.HOT_RECOMMENDATION_LIST)
+    public List<CourseRecommendVo> selectHot() {
         // 按照浏览量倒序查询所有课程
         List<CourseSummary> sale_count = courseSummaryService.selectList(new EntityWrapper<CourseSummary>()
                 .orderBy(CourseSummary.VIEW_COUNT, DESC));

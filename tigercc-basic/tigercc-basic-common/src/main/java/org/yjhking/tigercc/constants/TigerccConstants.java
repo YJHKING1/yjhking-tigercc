@@ -27,6 +27,22 @@ public class TigerccConstants {
      * 课程分类缓存
      */
     public static final String COURSE_TYPE_LIST = "'course_type_list'";
+    /**
+     * 课程推荐缓存key
+     */
+    public static final String COURSE_RECOMMENDATION_KEY = "course_recommendation_key";
+    /**
+     * 课程推荐缓存
+     */
+    public static final String COURSE_RECOMMENDATION_LIST = "'course_recommendation_list'";
+    /**
+     * 热门推荐缓存key
+     */
+    public static final String HOT_RECOMMENDATION_KEY = "hot_recommendation_key";
+    /**
+     * 热门推荐缓存
+     */
+    public static final String HOT_RECOMMENDATION_LIST = "'hot_recommendation_list'";
     public static final String USERNAME = "username";
     public static final String SAVE_TEACHER_SEPARATOR = "，";
     public static final String CRUMBS_PID = "pid";

@@ -2,6 +2,9 @@ package org.yjhking.tigercc.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.CourseRecommend;
+import org.yjhking.tigercc.vo.CourseRecommendVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,7 +20,7 @@ public interface ICourseRecommendService extends IService<CourseRecommend> {
     
     void saveOff(Long id);
     
-    Object selectAll();
+    List<CourseRecommendVo> selectAll();
     
-    Object selectHot();
+    List<CourseRecommendVo> selectHot();
 }

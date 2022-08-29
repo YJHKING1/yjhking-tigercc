@@ -2,7 +2,6 @@ package org.yjhking.tigercc.mq;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
@@ -62,9 +61,8 @@ public class CourseOrderTransactionListener implements RocketMQLocalTransactionL
             log.info("支付订单{}", orderJSON);
             PayOrder payOrder = JSON.parseObject(orderJSON, PayOrder.class);
             // 根据订单号查询订单
-            Wrapper<CourseOrder> wrapper = new EntityWrapper<>();
-            wrapper.eq("order_no", payOrder.getOrderNo());
-            CourseOrder courseOrderFromDB = courseOrderService.selectOne(wrapper);
+            CourseOrder courseOrderFromDB = courseOrderService.selectOne(new EntityWrapper<CourseOrder>()
+                    .eq(CourseOrder.ORDER_NO, payOrder.getOrderNo()));
             if (courseOrderFromDB != null) {
                 log.info("本地事务检查，订单存在，提交");
                 return RocketMQLocalTransactionState.COMMIT;
