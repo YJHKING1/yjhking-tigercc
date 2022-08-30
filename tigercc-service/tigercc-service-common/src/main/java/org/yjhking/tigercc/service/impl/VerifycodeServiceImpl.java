@@ -19,10 +19,7 @@ import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
 import org.yjhking.tigercc.service.IVerifycodeService;
-import org.yjhking.tigercc.utils.RedisUtils;
-import org.yjhking.tigercc.utils.StrUtils;
-import org.yjhking.tigercc.utils.VerificationUtils;
-import org.yjhking.tigercc.utils.VerifyCodeUtils;
+import org.yjhking.tigercc.utils.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -75,7 +72,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
     @Override
     public JsonResult imageCode(String key) {
         // 判断UUID不为空
-        VerificationUtils.isHasLength(key, GlobalErrorCode.COMMON_IMG_VERIFICATION_NULL);
+        AssertUtils.isHasLength(key, GlobalErrorCode.COMMON_IMG_VERIFICATION_NULL);
         // 生成随机验证码
         String code = VerifyCodeUtils.generateVerifyCode(imgProperties.getLength());
         // 把验证码的值存储到Redis,以前台传入的UUID作为key
@@ -97,9 +94,9 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
         blackVerification(mobileCodeDto);
         String imageCodeKey = redisTemplate.opsForValue().get(mobileCodeDto.getImageCodeKey());
         // 判断图片验证码是否过期
-        VerificationUtils.isHasLength(imageCodeKey, GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
+        AssertUtils.isHasLength(imageCodeKey, GlobalErrorCode.COMMON_IMG_VERIFICATION_OVERDUE);
         // 判断图片验证码是否正确
-        VerificationUtils.isEqualsIgnoreCase(imageCodeKey, mobileCodeDto.getImageCode()
+        AssertUtils.isEqualsIgnoreCase(imageCodeKey, mobileCodeDto.getImageCode()
                 , GlobalErrorCode.COMMON_IMG_VERIFICATION_ERROR);
     }
     
@@ -114,7 +111,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
                 .get(RedisConstants.REGISTER_CODE_PREFIX + mobileCodeDto.getMobile());
         String code;
         // 校验是否过期
-        if (VerificationUtils.hasLength(codeString)) {
+        if (VerifyUtils.hasLength(codeString)) {
             // 获取时间
             String time = RedisUtils.getSmsCodeTime(codeString);
             long intervalTime = System.currentTimeMillis() - Long.parseLong(time);
@@ -141,7 +138,7 @@ public class VerifycodeServiceImpl implements IVerifycodeService {
         // 获取ip
         ServletRequestAttributes requestAttributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        VerificationUtils.isNotNull(requestAttributes, GlobalErrorCode.SERVICE_IP_ERROR);
+        AssertUtils.isNotNull(requestAttributes, GlobalErrorCode.SERVICE_IP_ERROR);
         // ip与手机校验
         List<MessageBlack> messageBlacks = messageBlackService
                 .selectBlack(requestAttributes.getRequest().getRemoteAddr(), mobileCodeDto.getMobile());

@@ -20,7 +20,27 @@ import java.util.Date;
  */
 @TableName("t_pay_order")
 public class PayOrder extends Model<PayOrder> {
-    
+    /**
+     * 待支付
+     */
+    public static final int STATUS_WAIT_PAY = 0;
+    /**
+     * 支付中
+     */
+    public static final int STATUS_PAYMENTS = 1;
+    /**
+     * 支付成功
+     */
+    public static final int STATUS_PAY_SUCCESS = 2;
+    /**
+     * 用户取消
+     */
+    public static final int STATUS_USER_CANCEL = 3;
+    /**
+     * 系统取消
+     */
+    public static final int STATUS_AUTO_CANCEL = 4;
+    public static final String ORDER_NO = "order_no";
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)

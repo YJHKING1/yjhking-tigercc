@@ -25,8 +25,9 @@ import org.yjhking.tigercc.feignclient.SearchFeignClient;
 import org.yjhking.tigercc.mapper.CourseMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.*;
+import org.yjhking.tigercc.utils.AssertUtils;
 import org.yjhking.tigercc.utils.StrUtils;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 import org.yjhking.tigercc.vo.CourseDataForDetailVO;
 import org.yjhking.tigercc.vo.CourseDataOrderVo;
 import org.yjhking.tigercc.vo.CourseItemDataOrderVo;
@@ -81,22 +82,22 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         // 保存教师
         saveTeacher(dto);
         // 保存课程
-        VerificationUtils.isTrue(saveCourse(dto), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(saveCourse(dto), GlobalErrorCode.COURSE_ERROR);
         // 保存课程详情
-        VerificationUtils.isTrue(courseDetailService.save(dto), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(courseDetailService.save(dto), GlobalErrorCode.COURSE_ERROR);
         // 保存课程营销
-        VerificationUtils.isTrue(courseMarketService.save(dto), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(courseMarketService.save(dto), GlobalErrorCode.COURSE_ERROR);
         // 保存课程资源
-        VerificationUtils.isTrue(courseResourceService.save(dto), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(courseResourceService.save(dto), GlobalErrorCode.COURSE_ERROR);
         // 初始化课程统计
-        VerificationUtils.isTrue(courseSummaryService.save(dto.getCourse().getId()), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(courseSummaryService.save(dto.getCourse().getId()), GlobalErrorCode.COURSE_ERROR);
         // 保存教师中间表
         saveCourseTeacher(dto);
     }
     
     @Override
     public JsonResult onLineCourse(Long id) {
-        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
+        AssertUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
         CourseDoc courseDoc = id2CourseDoc(id, NumberConstants.ONE);
         searchFeignClient.saveCourse(courseDoc);
         // 用MQ发送站内消息
@@ -131,16 +132,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         CourseMarket courseMarket = courseMarketService.selectById(id);
         BeanUtils.copyProperties(courseMarket, courseDoc);
         BeanUtils.copyProperties(courseSummaryService.selectById(id), courseDoc);
-        if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
+        if (VerifyUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
             courseDoc.setChargeName(CourseMarket.CHARGE_FREE_NAME);
-        else if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE))
+        else if (VerifyUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE))
             courseDoc.setChargeName(CourseMarket.CHARGE_UN_FREE_NAME);
         return courseDoc;
     }
     
     @Override
     public JsonResult offLineCourse(Long id) {
-        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
+        AssertUtils.isNotNull(id, GlobalErrorCode.SERVICE_OBJECT_IS_NULL);
         searchFeignClient.deleteCourse(id2CourseDoc(id, NumberConstants.ZERO));
         // 取消课程推荐
         courseRecommendService.saveOff(id);
@@ -150,12 +151,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public JsonResult selectCourseDataForDetail(Long id) {
         // 判断id
-        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 查询课程
         Course course = selectById(id);
-        VerificationUtils.isNotNull(course, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(course, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 判断课程是否上线
-        VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE
+        AssertUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE
                 , GlobalErrorCode.COURSE_IS_NOT_ONLINE);
         // 查询并返回
         return JsonResult.success(new CourseDataForDetailVO(course, courseMarketService.selectById(id)
@@ -166,35 +167,35 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public JsonResult selectCourseStatusForUser(Long courseId) {
         // 判断id是否为空
-        VerificationUtils.isNotNull(courseId, GlobalErrorCode.COURSE_ID_IS_NULL);
+        AssertUtils.isNotNull(courseId, GlobalErrorCode.COURSE_ID_IS_NULL);
         // 查询课程
         Course course = selectById(courseId);
         // 判断课程是否为空
-        VerificationUtils.isNotNull(course, GlobalErrorCode.COURSE_IS_NULL);
+        AssertUtils.isNotNull(course, GlobalErrorCode.COURSE_IS_NULL);
         // 查询课程营销
         CourseMarket courseMarket = courseMarketService.selectById(courseId);
-        VerificationUtils.isNotNull(courseMarket, GlobalErrorCode.COURSE_IS_NULL);
+        AssertUtils.isNotNull(courseMarket, GlobalErrorCode.COURSE_IS_NULL);
         // 登录对象
         // todo 假数据
         Long loginId = 3L;
         // 是否上线
-        VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        AssertUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
         // 判断是否免费
-        if (VerificationUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
+        if (VerifyUtils.equals(courseMarket.getCharge(), CourseMarket.CHARGE_FREE))
             return JsonResult.success(new CourseStatus());
         // 是否购买
-        VerificationUtils.isNotNull(selectByUserIdAndCourseId(loginId, courseId), GlobalErrorCode.COURSE_IS_NOT_BUY);
+        AssertUtils.isNotNull(selectByUserIdAndCourseId(loginId, courseId), GlobalErrorCode.COURSE_IS_NOT_BUY);
         return JsonResult.success(new CourseStatus());
     }
     
     @Override
     public JsonResult selectCourseDataForOrder(String courseIds) {
-        VerificationUtils.isHasLength(courseIds, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isHasLength(courseIds, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 分割id并查询课程
         List<Long> courseIdsList = StrUtils.splitStr2LongArr(courseIds, TigerccConstants.SEPARATOR);
         List<Course> courses = selectBatchIds(courseIdsList);
-        VerificationUtils.isNotNull(courses, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
-        VerificationUtils.isEquals(courses.size(), courseIdsList.size(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(courses, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isEquals(courses.size(), courseIdsList.size(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 批量查询营销
         Map<Long, CourseMarket> courseMarketsMap = courseMarketService.selectBatchIds(courseIdsList).stream()
                 .collect(Collectors.toMap(CourseMarket::getId, CourseMarket -> CourseMarket));
@@ -203,8 +204,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (Course course : courses) {
             CourseMarket courseMarket = courseMarketsMap.get(course.getId());
-            VerificationUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
-            VerificationUtils.isEquals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE
+            AssertUtils.isEquals(course.getStatus(), Course.STATUS_ONLINE, GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+            AssertUtils.isEquals(courseMarket.getCharge(), CourseMarket.CHARGE_UN_FREE
                     , GlobalErrorCode.COURSE_IS_FREE);
             itemVos.add(new CourseItemDataOrderVo(course, courseMarket));
             totalAmount = totalAmount.add(courseMarket.getPrice());
@@ -214,14 +215,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     
     @Override
     public JsonResult recommendOn(Long id) {
-        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         courseRecommendService.saveOn(id);
         return JsonResult.success();
     }
     
     @Override
     public JsonResult recommendOff(Long id) {
-        VerificationUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(id, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         courseRecommendService.saveOff(id);
         return JsonResult.success();
     }
@@ -241,13 +242,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         List<CourseChapter> courseChapters = chapterService.selectList(
                 new EntityWrapper<CourseChapter>().eq(TigerccConstants.COURSE_ID, courseId));
         JsonResult jsonResult = mediaFeignClient.selectByCourseId(courseId);
-        VerificationUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.MEDIA_ERROR);
-        VerificationUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.MEDIA_LIST_NULL);
+        AssertUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.MEDIA_ERROR);
+        AssertUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.MEDIA_LIST_NULL);
         JSON.parseArray(JSON.toJSONString(jsonResult.getData()), MediaFile.class).forEach(mediaFile -> {
             mediaFile.setFileUrl("");
             CourseChapter courseChapter = courseChapters.stream().collect(Collectors.toMap(CourseChapter::getId
                     , CourseChapter -> CourseChapter)).get(mediaFile.getChapterId());
-            if (VerificationUtils.isValid(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);
+            if (VerifyUtils.nonEmpty(courseChapter)) courseChapter.getMediaFileList().add(mediaFile);
         });
         return courseChapters;
     }
@@ -305,10 +306,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     private void verify(CourseDto dto) {
         // 课程名重复校验
-        VerificationUtils.isNotHasLength(selectList(new EntityWrapper<Course>()
+        AssertUtils.isNotHasLength(selectList(new EntityWrapper<Course>()
                 .eq(RedisConstants.NAME, dto.getCourse().getName())), GlobalErrorCode.COURSE_NAME_REPEAT);
         // 校验课程时间
-        VerificationUtils.isTimeBefore(dto.getCourse().getStartTime(), dto.getCourse().getEndTime()
+        AssertUtils.isTimeBefore(dto.getCourse().getStartTime(), dto.getCourse().getEndTime()
                 , GlobalErrorCode.COURSE_TIME_ERROR);
     }
 }

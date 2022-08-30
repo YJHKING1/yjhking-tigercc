@@ -12,7 +12,7 @@ import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.CourseTypeMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.ICourseTypeService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -42,7 +42,7 @@ public class CourseTypeServiceImpl extends ServiceImpl<CourseTypeMapper, CourseT
         // 查找当前课程分类
         CourseType ownerType = findCourseTypeById(id, courseTypes);
         // 判断当前课程分类是否为空
-        VerificationUtils.isNotNull(ownerType, GlobalErrorCode.COURSE_TYPE_IS_NULL);
+        AssertUtils.isNotNull(ownerType, GlobalErrorCode.COURSE_TYPE_IS_NULL);
         // 声明返回集合
         List<CourseTypeCrumbsDto> resultList = new ArrayList<>();
         // 遍历当前课程分类的path，并将它们的同级分类添加到返回集合中

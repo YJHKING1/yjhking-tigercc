@@ -27,9 +27,10 @@ import org.yjhking.tigercc.feignclient.CourseFeignClient;
 import org.yjhking.tigercc.mapper.MediaFileMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IMediaFileService;
+import org.yjhking.tigercc.utils.AssertUtils;
 import org.yjhking.tigercc.utils.HlsVideoUtil;
 import org.yjhking.tigercc.utils.Mp4VideoUtil;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -241,23 +242,23 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
     @Override
     public JsonResult getUrlForUserById(Long mediaId) {
         // 判断参数
-        VerificationUtils.isNotNull(mediaId, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(mediaId, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         MediaFile mediaFile = selectById(mediaId);
-        VerificationUtils.isNotNull(mediaFile, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(mediaFile, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 获取课程状态：是否免费，是否购买，是否上线（Feign）
         JsonResult jsonResult = courseFeignClient.selectCourseStatusForUser(mediaFile.getCourseId());
-        VerificationUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.COURSE_ERROR);
-        VerificationUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(jsonResult.isSuccess(), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isNotNull(jsonResult.getData(), GlobalErrorCode.COURSE_ERROR);
         // 去课程服务编写查询接口，查询这三个状态
         CourseStatus courseStatus = JSON.parseObject(JSON.toJSONString(jsonResult.getData()), CourseStatus.class);
         // 判断课程是否上线
-        VerificationUtils.isTrue(courseStatus.getOnlined(), GlobalErrorCode.COURSE_IS_NOT_ONLINE);
+        AssertUtils.isTrue(courseStatus.getOnlined(), GlobalErrorCode.COURSE_IS_NOT_ONLINE);
         // 免费直接返回播放地址
         if (courseStatus.getFree()) return JsonResult.success(mediaFile.getFileUrl());
         // 用户购买了返回播放地址
         if (courseStatus.getBuyed()) return JsonResult.success(mediaFile.getFileUrl());
         // 如果是试看：直接返回播放地址
-        if (VerificationUtils.isValid(mediaFile.getFree()) && mediaFile.getFree())
+        if (VerifyUtils.nonEmpty(mediaFile.getFree()) && mediaFile.getFree())
             return JsonResult.success(mediaFile.getFileUrl());
         // 否则，不返回播放地址
         throw new GlobalCustomException(GlobalErrorCode.COURSE_IS_NOT_BUY);

@@ -70,6 +70,6 @@ public class CourseOrderController {
     
     @PostMapping("/placeOrder")
     public JsonResult placeOrder(@RequestBody PlaceOrderDto dto) {
-        return courseOrderService.placeOrder(dto);
+        return JsonResult.success(courseOrderService.placeOrder(dto));
     }
 }

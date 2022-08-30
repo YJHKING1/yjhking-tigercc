@@ -3,7 +3,6 @@ package org.yjhking.tigercc.service;
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.CourseOrder;
 import org.yjhking.tigercc.dto.PlaceOrderDto;
-import org.yjhking.tigercc.result.JsonResult;
 
 /**
  * <p>
@@ -15,7 +14,7 @@ import org.yjhking.tigercc.result.JsonResult;
  */
 public interface ICourseOrderService extends IService<CourseOrder> {
     
-    JsonResult placeOrder(PlaceOrderDto dto);
+    String placeOrder(PlaceOrderDto dto);
     
     void saveOrderAndItem(CourseOrder courseOrder);
 }

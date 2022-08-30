@@ -11,7 +11,7 @@ import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.LoginMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.ILoginService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
 
 /**
  * <p>
@@ -42,8 +42,8 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, Login> implements
     @Override
     public JsonResult common(LoginDto dto) {
         Login login = selectOne(new EntityWrapper<Login>().eq(TigerccConstants.USERNAME, dto.getUsername()));
-        VerificationUtils.isNotNull(login, GlobalErrorCode.USER_IS_NULL);
-        VerificationUtils.isEqualsTrim(login.getPassword(), dto.getPassword(), GlobalErrorCode.USER_PASSWORD_IS_ERROR);
+        AssertUtils.isNotNull(login, GlobalErrorCode.USER_IS_NULL);
+        AssertUtils.isEqualsTrim(login.getPassword(), dto.getPassword(), GlobalErrorCode.USER_PASSWORD_IS_ERROR);
         return JsonResult.success();
     }
 }

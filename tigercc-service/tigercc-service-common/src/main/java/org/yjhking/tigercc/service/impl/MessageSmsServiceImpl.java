@@ -13,7 +13,8 @@ import org.yjhking.tigercc.mapper.MessageSmsMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -43,14 +44,14 @@ public class MessageSmsServiceImpl extends ServiceImpl<MessageSmsMapper, Message
         // ip保存
         ServletRequestAttributes requestAttributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (VerificationUtils.isValid(requestAttributes))
+        if (VerifyUtils.nonEmpty(requestAttributes))
             messageSms.setIp(requestAttributes.getRequest().getRemoteAddr());
         super.insert(messageSms);
     }
     
     @Override
     public JsonResult black(BlackDto dto) {
-        VerificationUtils.isNotNull(dto);
+        AssertUtils.isNotNull(dto);
         List<MessageSms> messageSmsList = selectList(new EntityWrapper<MessageSms>()
                 .eq(RedisConstants.PHONE, dto.getPhone()));
         // 最新的数据

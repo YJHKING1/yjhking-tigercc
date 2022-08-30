@@ -16,10 +16,10 @@ import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IUserAccountService;
 import org.yjhking.tigercc.service.IUserBaseInfoService;
 import org.yjhking.tigercc.service.IUserService;
+import org.yjhking.tigercc.utils.AssertUtils;
 import org.yjhking.tigercc.utils.BitStatesUtils;
 import org.yjhking.tigercc.utils.ObjectMapperUtils;
 import org.yjhking.tigercc.utils.RedisUtils;
-import org.yjhking.tigercc.utils.VerificationUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -77,12 +77,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String phoneCode = redisTemplate.opsForValue()
                 .get(RedisConstants.REGISTER_CODE_PREFIX + dto.getMobile());
         // 过期校验
-        VerificationUtils.isHasLength(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
+        AssertUtils.isHasLength(phoneCode, GlobalErrorCode.COMMON_PHONE_VERIFICATION_OVERDUE);
         // 正确校验
-        VerificationUtils.isEqualsTrim(RedisUtils.getSmsCode(phoneCode)
+        AssertUtils.isEqualsTrim(RedisUtils.getSmsCode(phoneCode)
                 , dto.getSmsCode(), GlobalErrorCode.COMMON_PHONE_VERIFICATION_ERROR);
         // 手机是否已经被注册校验
-        VerificationUtils.isNull(selectOne(new EntityWrapper<User>().eq(RedisConstants.PHONE, dto.getMobile()))
+        AssertUtils.isNull(selectOne(new EntityWrapper<User>().eq(RedisConstants.PHONE, dto.getMobile()))
                 , GlobalErrorCode.USER_PHONE_REPEAT_ERROR);
     }
     

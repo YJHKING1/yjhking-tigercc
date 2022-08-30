@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.yjhking.tigercc.domain.PayOrder;
@@ -16,4 +17,8 @@ import org.yjhking.tigercc.service.IPayOrderService;
  */
 @Service
 public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implements IPayOrderService {
+    @Override
+    public PayOrder selectByOrderNo(String orderNo) {
+        return selectOne(new EntityWrapper<PayOrder>().eq(PayOrder.ORDER_NO, orderNo));
+    }
 }

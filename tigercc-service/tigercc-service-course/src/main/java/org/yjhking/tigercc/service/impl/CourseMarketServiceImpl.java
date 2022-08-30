@@ -8,7 +8,7 @@ import org.yjhking.tigercc.dto.CourseDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.CourseMarketMapper;
 import org.yjhking.tigercc.service.ICourseMarketService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -28,8 +28,8 @@ public class CourseMarketServiceImpl extends ServiceImpl<CourseMarketMapper, Cou
     public boolean save(CourseDto dto) {
         CourseMarket courseMarket = dto.getCourseMarket();
         if (Objects.equals(courseMarket.getCharge(), NumberConstants.TWO)) {
-            VerificationUtils.isHasLength(String.valueOf(courseMarket.getPrice()), GlobalErrorCode.COURSE_PRICE_IS_NULL);
-            VerificationUtils.isHasLength(String.valueOf(courseMarket.getPriceOld())
+            AssertUtils.isHasLength(String.valueOf(courseMarket.getPrice()), GlobalErrorCode.COURSE_PRICE_IS_NULL);
+            AssertUtils.isHasLength(String.valueOf(courseMarket.getPriceOld())
                     , GlobalErrorCode.COURSE_PRICE_IS_NULL);
         } else {
             courseMarket.setPrice(BigDecimal.valueOf(0));

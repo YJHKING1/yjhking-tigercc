@@ -66,4 +66,9 @@ public class PayOrderController {
         page = payOrderService.selectPage(page);
         return JsonResult.success(new PageList<PayOrder>(page.getTotal(), page.getRecords()));
     }
+    
+    @GetMapping("/checkPayOrder/{orderNo}")
+    public JsonResult checkPayOrder(@PathVariable("orderNo") String orderNo) {
+        return JsonResult.success(null != payOrderService.selectByOrderNo(orderNo));
+    }
 }

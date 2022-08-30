@@ -15,7 +15,8 @@ import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.MessageBlackMapper;
 import org.yjhking.tigercc.service.IMessageBlackService;
 import org.yjhking.tigercc.service.IMessageSmsService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -57,7 +58,7 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
     private void repeatCheck(String ip, String phone) {
         List<MessageBlack> list = selectList(new EntityWrapper<MessageBlack>().eq(RedisConstants.IP, ip)
                 .or().eq(RedisConstants.PHONE, phone));
-        VerificationUtils.isNotHasLength(list, GlobalErrorCode.COMMON_VERIFICATION_BLACK);
+        AssertUtils.isNotHasLength(list, GlobalErrorCode.COMMON_VERIFICATION_BLACK);
     }
     
     @Override
@@ -68,11 +69,11 @@ public class MessageBlackServiceImpl extends ServiceImpl<MessageBlackMapper, Mes
         List<MessageSms> messageSmsList = messageSmsService
                 .selectList(new EntityWrapper<MessageSms>().eq(RedisConstants.PHONE, phone));
         MessageSms messageSms = null;
-        if (VerificationUtils.hasLength(messageSmsList))
+        if (VerifyUtils.hasLength(messageSmsList))
             messageSms = messageSmsList.get(messageSmsList.size() - NumberConstants.ONE);
         EntityWrapper<MessageBlack> query = new EntityWrapper<>();
         // 根据ip或手机及userId查找数据库
-        if (VerificationUtils.isValid(messageSms)) query.eq(RedisConstants.IP, ip)
+        if (VerifyUtils.nonEmpty(messageSms)) query.eq(RedisConstants.IP, ip)
                 .or().eq(RedisConstants.PHONE, phone).or().eq(TigerccConstants.USER_ID, messageSms.getUserId());
             // 根据ip或手机查找数据库
         else query.eq(RedisConstants.IP, ip).or().eq(RedisConstants.PHONE, phone);

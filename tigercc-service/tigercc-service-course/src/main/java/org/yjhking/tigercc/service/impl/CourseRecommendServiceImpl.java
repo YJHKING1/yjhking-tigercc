@@ -16,7 +16,8 @@ import org.yjhking.tigercc.mapper.CourseRecommendMapper;
 import org.yjhking.tigercc.service.ICourseRecommendService;
 import org.yjhking.tigercc.service.ICourseService;
 import org.yjhking.tigercc.service.ICourseSummaryService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.AssertUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 import org.yjhking.tigercc.vo.CourseRecommendVo;
 
 import javax.annotation.Resource;
@@ -46,10 +47,10 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
             value = TigerccConstants.HOT_RECOMMENDATION_KEY, key = TigerccConstants.HOT_RECOMMENDATION_LIST)})
     public void saveOn(Long id) {
         // 校验课程是否上架
-        VerificationUtils.isNotNull(courseService.selectOne(new EntityWrapper<Course>().eq(TigerccConstants.ID, id)
+        AssertUtils.isNotNull(courseService.selectOne(new EntityWrapper<Course>().eq(TigerccConstants.ID, id)
                 .and().eq(Course.STATUS, NumberConstants.ONE)), GlobalErrorCode.COURSE_IS_OFF);
         // 激活推荐
-        if (VerificationUtils.isValid(selectById(id))) updateById(new CourseRecommend(id, CourseRecommend.STATE_ON));
+        if (VerifyUtils.nonEmpty(selectById(id))) updateById(new CourseRecommend(id, CourseRecommend.STATE_ON));
         else insert(new CourseRecommend(id, CourseRecommend.STATE_ON));
     }
     
@@ -59,7 +60,7 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
             value = TigerccConstants.HOT_RECOMMENDATION_KEY, key = TigerccConstants.HOT_RECOMMENDATION_LIST)})
     public void saveOff(Long id) {
         // 取消推荐
-        if (VerificationUtils.isValid(selectById(id))) updateById(new CourseRecommend(id, CourseRecommend.STATE_OFF));
+        if (VerifyUtils.nonEmpty(selectById(id))) updateById(new CourseRecommend(id, CourseRecommend.STATE_OFF));
         else insert(new CourseRecommend(id, CourseRecommend.STATE_OFF));
     }
     
@@ -69,10 +70,10 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
         // 查询所有激活推荐课程id
         List<Long> ids = selectList(new EntityWrapper<CourseRecommend>().eq(CourseRecommend.STATE
                 , CourseRecommend.STATE_ON)).stream().map(CourseRecommend::getId).collect(Collectors.toList());
-        if (!VerificationUtils.hasLength(ids)) return null;
+        if (!VerifyUtils.hasLength(ids)) return null;
         // 根据推荐课程id查课程
         List<Course> courses = courseService.selectBatchIds(ids);
-        if (!VerificationUtils.hasLength(courses)) return null;
+        if (!VerifyUtils.hasLength(courses)) return null;
         // 返回集合[{课程id，课程封面地址，课程名},...]
         return courses.stream().map(course -> new CourseRecommendVo(course.getId(), course.getPic(), course.getName()))
                 .collect(Collectors.toList());
@@ -84,7 +85,7 @@ public class CourseRecommendServiceImpl extends ServiceImpl<CourseRecommendMappe
         // 按照浏览量倒序查询所有课程
         List<CourseSummary> sale_count = courseSummaryService.selectList(new EntityWrapper<CourseSummary>()
                 .orderBy(CourseSummary.VIEW_COUNT, DESC));
-        VerificationUtils.isHasLength(sale_count, GlobalErrorCode.COURSE_SUMMARY_IS_NULL);
+        AssertUtils.isHasLength(sale_count, GlobalErrorCode.COURSE_SUMMARY_IS_NULL);
         return courseSummary2CourseRecommendVo(sale_count);
     }
     

@@ -27,8 +27,8 @@ import org.yjhking.tigercc.mapper.CourseOrderMapper;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.ICourseOrderItemService;
 import org.yjhking.tigercc.service.ICourseOrderService;
+import org.yjhking.tigercc.utils.AssertUtils;
 import org.yjhking.tigercc.utils.CodeGenerateUtils;
-import org.yjhking.tigercc.utils.VerificationUtils;
 import org.yjhking.tigercc.vo.CourseDataOrderVo;
 import org.yjhking.tigercc.vo.CourseItemDataOrderVo;
 
@@ -58,19 +58,19 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     private RocketMQTemplate rocketMQTemplate;
     
     @Override
-    public JsonResult placeOrder(PlaceOrderDto dto) {
+    public String placeOrder(PlaceOrderDto dto) {
         // todo 假数据 用户id
         Long loginId = 3L;
         // 参数校验
         String courseIdStr = StringUtils.join(dto.getCourseIds(), TigerccConstants.SEPARATOR);
         String token = (String) redisTemplate.opsForValue()
                 .get(RedisConstants.TOKEN + loginId + RedisConstants.REDIS_VERIFY + courseIdStr);
-        VerificationUtils.isHasLength(token, GlobalErrorCode.ORDER_REPEAT);
-        VerificationUtils.isEquals(token, dto.getToken(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isHasLength(token, GlobalErrorCode.ORDER_REPEAT);
+        AssertUtils.isEquals(token, dto.getToken(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
         // 获取课程数据
         JsonResult result = courseFeignClient.selectCourseDataForOrder(courseIdStr);
-        VerificationUtils.isTrue(result.isSuccess(), GlobalErrorCode.COURSE_ERROR);
-        VerificationUtils.isNotNull(result.getData(), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isTrue(result.isSuccess(), GlobalErrorCode.COURSE_ERROR);
+        AssertUtils.isNotNull(result.getData(), GlobalErrorCode.COURSE_ERROR);
         CourseDataOrderVo courseDataOrderVo =
                 JSON.parseObject(JSON.toJSONString(result.getData()), CourseDataOrderVo.class);
         BigDecimal totalAmount = courseDataOrderVo.getTotalAmount();
@@ -120,19 +120,19 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
                                 , courseOrder.getPayType(), orderSn, loginId, "", courseOrder.getTitle())))
                         .build(), courseOrder);
         // 断言下单状态
-        VerificationUtils.isEquals(transactionSendResult.getLocalTransactionState()
+        AssertUtils.isEquals(transactionSendResult.getLocalTransactionState()
                 , LocalTransactionState.COMMIT_MESSAGE, GlobalErrorCode.ORDER_MISS);
         // 断言发送事务消息状态
-        VerificationUtils.isEquals(transactionSendResult.getSendStatus()
+        AssertUtils.isEquals(transactionSendResult.getSendStatus()
                 , SendStatus.SEND_OK, GlobalErrorCode.SERVICE_TRANSACTION_MESSAGE_FAILED);
         // 删除token，防止重复提交
         redisTemplate.delete(token);
-        return JsonResult.success();
+        return orderSn;
     }
     
     @Override
     public void saveOrderAndItem(CourseOrder courseOrder) {
-        VerificationUtils.isNull(selectByOrderNo(courseOrder.getOrderNo()), GlobalErrorCode.ORDER_EXIST);
+        AssertUtils.isNull(selectByOrderNo(courseOrder.getOrderNo()), GlobalErrorCode.ORDER_EXIST);
         insert(courseOrder);
         // 保存明细
         courseOrder.getItems().forEach(item -> item.setOrderId(courseOrder.getId()));

@@ -57,5 +57,6 @@ public class TigerccConstants {
     public static final String ORDER_YUAN = "元";
     public static final String SEMICOLON = "；";
     public static final String MQ_COURSEORDER_PAY_GROUP_TRANSACTION = "mq_courseorder_pay_group_transaction";
-    public static final String TX_PAY_RESULT_GROUP = "tx_pay_result_group";
+    public static final String ALIPAY_FAIL = "fail";
+    public static final String ALIPAY_SUCCESS = "success";
 }

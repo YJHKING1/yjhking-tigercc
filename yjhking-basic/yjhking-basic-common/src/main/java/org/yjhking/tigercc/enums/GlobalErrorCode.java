@@ -78,7 +78,17 @@ public enum GlobalErrorCode {
     ORDER_ERROR("90000", "订单服务异常！"),
     ORDER_REPEAT("90001", "订单重复提交，或下单超时！"),
     ORDER_EXIST("90002", "订单已存在！"),
-    ORDER_MISS("90003", "下单失败！");
+    ORDER_MISS("90003", "下单失败！"),
+    ORDER_TYPE_ERROR("90004", "订单状态异常！"),
+    ORDER_NUM_ERROR("90005", "订单号无效！"),
+    ORDER_PROCESSED("90006", "订单已被处理！"),
+    
+    // pay服务异常：110xx
+    PAY_ERROR("11000", "支付服务异常！"),
+    PAY_IS_ERROR("11001", "支付失败！"),
+    PAY_SIGN_FAILED("11002", "验签失败！"),
+    PAY_MONEY_ERROR("11003", "金额异常！"),
+    PAY_WAIT("11004", "等待支付！");
     
     // 异常码
     private String code;

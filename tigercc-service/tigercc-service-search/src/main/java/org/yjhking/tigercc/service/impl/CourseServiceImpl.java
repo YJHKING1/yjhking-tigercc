@@ -21,7 +21,7 @@ import org.yjhking.tigercc.mapper.HighlightResultMapper;
 import org.yjhking.tigercc.repository.CourseESRepository;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.CourseService;
-import org.yjhking.tigercc.utils.VerificationUtils;
+import org.yjhking.tigercc.utils.VerifyUtils;
 import org.yjhking.tigercc.vo.AggPageList;
 import org.yjhking.tigercc.vo.BucketVO;
 
@@ -49,7 +49,7 @@ public class CourseServiceImpl implements CourseService {
         NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder().withPageable(PageRequest.of(
                 searchDto.getPage() - NumberConstants.ONE, searchDto.getRows()));
         // 排序
-        if (VerificationUtils.hasLength(searchDto.getSortField()))
+        if (VerifyUtils.hasLength(searchDto.getSortField()))
             builder.withSort(new FieldSortBuilder(getSortFieldName(searchDto.getSortField()))
                     .order(getSortOrder(searchDto.getSortType())));
         // 条件
@@ -106,17 +106,17 @@ public class CourseServiceImpl implements CourseService {
      */
     private BoolQueryBuilder queryBuilder(SearchDto searchDto) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        if (VerificationUtils.hasLength(searchDto.getKeyword()))
+        if (VerifyUtils.hasLength(searchDto.getKeyword()))
             boolQueryBuilder.must(QueryBuilders.matchQuery(ESConstants.NAME, searchDto.getKeyword()));
-        if (VerificationUtils.hasLength(searchDto.getGradeName()))
+        if (VerifyUtils.hasLength(searchDto.getGradeName()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.GRADE_NAME, searchDto.getGradeName()));
-        if (VerificationUtils.isValid(searchDto.getCourseTypeId()))
+        if (VerifyUtils.nonEmpty(searchDto.getCourseTypeId()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.COURSE_TYPE_ID, searchDto.getCourseTypeId()));
-        if (VerificationUtils.hasLength(searchDto.getChargeName()))
+        if (VerifyUtils.hasLength(searchDto.getChargeName()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.CHARGE_NAME, searchDto.getChargeName()));
-        if (VerificationUtils.isValid(searchDto.getPriceMax()))
+        if (VerifyUtils.nonEmpty(searchDto.getPriceMax()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.PRICE, searchDto.getPriceMax()));
-        if (VerificationUtils.isValid(searchDto.getPriceMin()))
+        if (VerifyUtils.nonEmpty(searchDto.getPriceMin()))
             boolQueryBuilder.filter(QueryBuilders.termQuery(ESConstants.PRICE, searchDto.getPriceMin()));
         return boolQueryBuilder;
     }
