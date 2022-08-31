@@ -1,8 +1,11 @@
 package org.yjhking.tigercc.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.payment.common.models.AlipayTradeCloseResponse;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.SendStatus;
@@ -20,8 +23,10 @@ import org.yjhking.tigercc.domain.CourseMarket;
 import org.yjhking.tigercc.domain.CourseOrder;
 import org.yjhking.tigercc.domain.CourseOrderItem;
 import org.yjhking.tigercc.dto.PayOrder2MQDto;
+import org.yjhking.tigercc.dto.PlaceCourseOrderTo;
 import org.yjhking.tigercc.dto.PlaceOrderDto;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
+import org.yjhking.tigercc.exception.GlobalCustomException;
 import org.yjhking.tigercc.feignclient.CourseFeignClient;
 import org.yjhking.tigercc.mapper.CourseOrderMapper;
 import org.yjhking.tigercc.result.JsonResult;
@@ -47,6 +52,7 @@ import java.util.List;
  * @since 2022-08-16
  */
 @Service
+@Slf4j
 public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, CourseOrder> implements ICourseOrderService {
     @Resource
     private RedisTemplate<Object, Object> redisTemplate;
@@ -115,7 +121,7 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         courseOrder.setItems(items);
         // 保存订单
         TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction(
-                TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION, MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER
+                MQConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION, MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER
                 , MessageBuilder.withPayload(JSON.toJSONString(new PayOrder2MQDto(courseOrder.getPayAmount()
                                 , courseOrder.getPayType(), orderSn, loginId, "", courseOrder.getTitle())))
                         .build(), courseOrder);
@@ -141,5 +147,28 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     
     public CourseOrder selectByOrderNo(String orderNo) {
         return selectOne(new EntityWrapper<CourseOrder>().eq(CourseOrder.ORDER_NO, orderNo));
+    }
+    
+    @Override
+    public void closeOrder(PlaceCourseOrderTo placeCourseOrderTo) {
+        log.info("支付关单申请...");
+        //查询ali支付配置参数
+        // AlipayInfo alipayInfo = alipayInfoService.selectList(null).get(0);
+        //配置对象
+        // Config config = getOptions(alipayInfo);
+        // Factory.setOptions(config);
+        try {
+            // 2. 发起API调用
+            AlipayTradeCloseResponse response = Factory.Payment.Common().close(placeCourseOrderTo.getOrderNo());
+            if (response.code.equals("10000")) {
+                
+                log.info("关单成功");
+            } else {
+                log.info("关单失败 {} , {} ", response.msg, response.subMsg);
+            }
+        } catch (Exception e) {
+            log.error("支付申请异常 {}", e.getMessage());
+            throw new GlobalCustomException(GlobalErrorCode.SERVICE_TRANSACTION_MESSAGE_FAILED);
+        }
     }
 }

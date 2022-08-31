@@ -12,5 +12,8 @@ import org.yjhking.tigercc.domain.CourseUserLearn;
  * @since 2022-08-16
  */
 public interface ICourseUserLearnService extends IService<CourseUserLearn> {
-
+    
+    CourseUserLearn selectByCourseOrderNo(String out_trade_no);
+    
+    void create(Long userId, Long courseId);
 }

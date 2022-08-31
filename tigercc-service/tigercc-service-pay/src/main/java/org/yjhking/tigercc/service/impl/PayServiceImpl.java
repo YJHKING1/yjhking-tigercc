@@ -5,14 +5,22 @@ import com.alipay.easysdk.factory.Factory;
 import com.alipay.easysdk.kernel.Config;
 import com.alipay.easysdk.kernel.util.ResponseChecker;
 import com.alipay.easysdk.payment.page.models.AlipayTradePagePayResponse;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.constants.NumberConstants;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.constants.TigerccConstants;
 import org.yjhking.tigercc.domain.AlipayInfo;
 import org.yjhking.tigercc.domain.PayFlow;
 import org.yjhking.tigercc.domain.PayOrder;
 import org.yjhking.tigercc.dto.AlipayNotifyDto;
 import org.yjhking.tigercc.dto.PayParamDto;
+import org.yjhking.tigercc.dto.PlaceCourseOrderTo;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.exception.GlobalCustomException;
 import org.yjhking.tigercc.result.JsonResult;
@@ -36,6 +44,8 @@ public class PayServiceImpl implements PayService {
     private IPayOrderService payOrderService;
     @Resource
     private IAlipayInfoService alipayInfoService;
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
     
     @Override
     public JsonResult apply(PayParamDto dto) {
@@ -107,7 +117,18 @@ public class PayServiceImpl implements PayService {
         payFlow.setTotalAmount(totalAmount);
         payFlow.setTradeStatus(dto.getTrade_status());
         // insert(payFlow);
-        // todo 发送消息
+        // 发送消息
+        Message<String> message = MessageBuilder.withPayload(JSON.toJSONString(dto)).build();
+        SendResult mqSend2CourseResult = rocketMQTemplate.sendMessageInTransaction(MQConstants.TX_PAY_RESULT_GROUP
+                , MQConstants.TOPIC_PAY_TAGS_PAY, message, null);
+        // 延迟关单
+        SendResult result = rocketMQTemplate.syncSend(
+                MQConstants.TOPIC_COURSE_ORDER_DEALY + RedisConstants.REDIS_VERIFY
+                        + MQConstants.TAGS_COURSE_ORDER_DEALY,
+                MessageBuilder.withPayload(JSON.toJSONString(new PlaceCourseOrderTo(out_trade_no))).build()
+                , 2000, 5);
+        // 校验是否发送成功
+        AssertUtils.isEquals(mqSend2CourseResult.getSendStatus(), SendStatus.SEND_OK, GlobalErrorCode.PAY_IS_ERROR);
         return TigerccConstants.ALIPAY_SUCCESS;
     }
     

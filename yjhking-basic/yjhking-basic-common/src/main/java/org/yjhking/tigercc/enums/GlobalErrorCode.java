@@ -66,6 +66,7 @@ public enum GlobalErrorCode {
     COURSE_IS_FREE("60008", "课程免费！"),
     COURSE_IS_OFF("60009", "课程已下架不可推荐！"),
     COURSE_SUMMARY_IS_NULL("60010", "可推荐课程为空！"),
+    COURSE_RECEIPT_PARAMETER_ERROR("60011", "回执参数获取失败，无效的UserId和CourseId！"),
     
     // search服务异常：700xx
     SEARCH_ERROR("70000", "搜索服务异常！"),

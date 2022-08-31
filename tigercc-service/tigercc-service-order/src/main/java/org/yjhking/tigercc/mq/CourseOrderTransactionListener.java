@@ -9,7 +9,7 @@ import org.apache.rocketmq.spring.core.RocketMQLocalTransactionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-import org.yjhking.tigercc.constants.TigerccConstants;
+import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.domain.CourseOrder;
 import org.yjhking.tigercc.domain.PayOrder;
 import org.yjhking.tigercc.service.ICourseOrderService;
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 // 保存课程订单以及支付订单的事务消息
 @Component
 @Slf4j
-@RocketMQTransactionListener(txProducerGroup = TigerccConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION)
+@RocketMQTransactionListener(txProducerGroup = MQConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION)
 public class CourseOrderTransactionListener implements RocketMQLocalTransactionListener {
     
     @Autowired

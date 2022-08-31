@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @TableName("t_course_user_learn")
 public class CourseUserLearn extends Model<CourseUserLearn> {
-    
+    public static final String COURSE_ORDER_NO = "course_order_no";
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)

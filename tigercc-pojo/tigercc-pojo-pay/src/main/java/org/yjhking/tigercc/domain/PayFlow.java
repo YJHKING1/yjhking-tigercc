@@ -20,7 +20,7 @@ import java.util.Date;
  */
 @TableName("t_pay_flow")
 public class PayFlow extends Model<PayFlow> {
-    
+    public static final String OUT_TRADE_NO = "out_trade_no";
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)
