@@ -19,5 +19,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:org/yjhking/tigercc/mapper/*Mapper.xml # 指定mapper.xml位置
   type-aliases-package: org.yjhking.tigercc.domain,org.yjhking.tigercc.query # 配置别名
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 开启日志
 seata:
   enableAutoDataSourceProxy: false # 关闭DataSource代理的自动配置，我们要手动配置

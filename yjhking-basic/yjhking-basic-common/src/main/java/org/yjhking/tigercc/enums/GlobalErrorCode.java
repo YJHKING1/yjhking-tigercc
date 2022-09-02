@@ -89,7 +89,14 @@ public enum GlobalErrorCode {
     PAY_IS_ERROR("11001", "支付失败！"),
     PAY_SIGN_FAILED("11002", "验签失败！"),
     PAY_MONEY_ERROR("11003", "金额异常！"),
-    PAY_WAIT("11004", "等待支付！");
+    PAY_WAIT("11004", "等待支付！"),
+    
+    // kill服务异常：120xx
+    KILL_ERROR("12000", "秒杀服务异常！"),
+    KILL_COURSE_REPEAT("12001", "该课程已经存在！"),
+    KILL_ACTIVITY_NOT_EXIST("12002", "活动不存在！"),
+    KILL_EVENT_PUBLISHED("12003", "活动已经发布！"),
+    KILL_NO_ITEMS("12004", "活动下无商品！");
     
     // 异常码
     private String code;

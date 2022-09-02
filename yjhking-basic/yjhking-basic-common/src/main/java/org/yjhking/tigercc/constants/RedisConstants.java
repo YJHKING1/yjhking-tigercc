@@ -7,6 +7,14 @@ package org.yjhking.tigercc.constants;
  */
 public class RedisConstants {
     /**
+     * redis地址
+     */
+    public static final String REDIS_ADDRESS = "redis://127.0.0.1:6379";
+    /**
+     * redis密码
+     */
+    public static final String REDIS_PASSWORD = "root";
+    /**
      * 手机短信验证码前缀
      */
     public static final String REGISTER_CODE_PREFIX = "sms_register:";
@@ -35,4 +43,6 @@ public class RedisConstants {
      */
     public static final String NAME = "name";
     public static final String TOKEN = "token:";
+    public static final String KILL_COURSES = "killCourses";
+    public static final String STORE = "store:";
 }

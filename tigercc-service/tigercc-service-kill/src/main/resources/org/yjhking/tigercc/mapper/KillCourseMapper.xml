@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.yjhking.tigercc.mapper.KillCourseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.yjhking.tigercc.domain.KillCourse">
+        <id column="id" property="id" />
+        <result column="course_name" property="courseName" />
+        <result column="course_id" property="courseId" />
+        <result column="kill_price" property="killPrice" />
+        <result column="kill_count" property="killCount" />
+        <result column="kill_limit" property="killLimit" />
+        <result column="kill_sort" property="killSort" />
+        <result column="publish_status" property="publishStatus" />
+        <result column="course_pic" property="coursePic" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="create_time" property="createTime" />
+        <result column="publish_time" property="publishTime" />
+        <result column="teacher_names" property="teacherNames" />
+        <result column="cancel_publish_time" property="cancelPublishTime" />
+        <result column="activity_id" property="activityId" />
+        <result column="time_str" property="timeStr" />
+    </resultMap>
+
+</mapper>
