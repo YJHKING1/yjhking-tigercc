@@ -3,10 +3,14 @@ package org.yjhking.tigercc.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.yjhking.tigercc.constants.RedisConstants;
 import org.yjhking.tigercc.domain.KillCourse;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.mapper.KillCourseMapper;
+import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.service.IKillActivityService;
 import org.yjhking.tigercc.service.IKillCourseService;
 import org.yjhking.tigercc.utils.AssertUtils;
@@ -26,6 +30,8 @@ import java.util.Date;
 public class KillCourseServiceImpl extends ServiceImpl<KillCourseMapper, KillCourse> implements IKillCourseService {
     @Resource
     private IKillActivityService killActivityService;
+    @Resource
+    private RedisTemplate<Object, Object> redisTemplate;
     
     @Override
     public void add(KillCourse killCourse) {
@@ -36,6 +42,21 @@ public class KillCourseServiceImpl extends ServiceImpl<KillCourseMapper, KillCou
         BeanUtils.copyProperties(killActivityService.selectById(activityId), killCourse);
         killCourse.setCreateTime(new Date());
         insert(killCourse);
+    }
+    
+    @Override
+    public JsonResult onlineAll() {
+        BoundHashOperations<Object, Object, KillCourse> killCourse =
+                redisTemplate.boundHashOps(RedisConstants.KILL_COURSES);
+        return JsonResult.success(killCourse.values());
+    }
+    
+    @Override
+    public JsonResult onlineOne(Long killId, Long activityId) {
+        AssertUtils.isNotNull(killId, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        AssertUtils.isNotNull(activityId, GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        return JsonResult.success((KillCourse) redisTemplate.opsForHash()
+                .get(RedisConstants.KILL_COURSES, killId.toString()));
     }
     
     private KillCourse selectByIdActiveIdAndCourseId(Long activityId, Long courseId) {

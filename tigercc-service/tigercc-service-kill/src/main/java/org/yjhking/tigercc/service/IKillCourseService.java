@@ -2,6 +2,7 @@ package org.yjhking.tigercc.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.KillCourse;
+import org.yjhking.tigercc.result.JsonResult;
 
 /**
  * <p>
@@ -14,4 +15,8 @@ import org.yjhking.tigercc.domain.KillCourse;
 public interface IKillCourseService extends IService<KillCourse> {
     
     void add(KillCourse killCourse);
+    
+    JsonResult onlineAll();
+    
+    JsonResult onlineOne(Long killId, Long activityId);
 }

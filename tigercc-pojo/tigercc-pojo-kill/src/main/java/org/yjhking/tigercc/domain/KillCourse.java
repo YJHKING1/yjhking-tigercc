@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.enums.IdType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.yjhking.tigercc.constants.NumberConstants;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -29,6 +30,10 @@ import java.util.Date;
 public class KillCourse extends Model<KillCourse> {
     public static final String ACTIVITY_ID = "activity_id";
     public static final String COURSE_ID = "course_id";
+    private static final String beforeKill = "未开始";
+    private static final String nowKill = "秒杀中";
+    private static final String afterKill = "已结束";
+    private static final String wrongKill = "出错惹 ＞﹏＜";
     private static final long serialVersionUID = 1L;
     
     @TableId(value = "id", type = IdType.AUTO)
@@ -108,6 +113,37 @@ public class KillCourse extends Model<KillCourse> {
     private String timeStr;
     @TableField(exist = false)
     private String code;
+    @TableField(exist = false)
+    private Boolean killing;
+    @TableField(exist = false)
+    private String killStatusName;
+    @TableField(exist = false)
+    private Long timeDiffMill;
+    @TableField(exist = false)
+    private Boolean unbegin;
+    @TableField(exist = false)
+    private Date now = new Date();
+    
+    public boolean getKilling() {
+        return now.after(getStartTime()) && now.before(getEndTime());
+    }
+    
+    public String getKillStatusName() {
+        if (getKilling()) return nowKill;
+        else if (now.before(getStartTime())) return beforeKill;
+        else if (now.after(getEndTime())) return afterKill;
+        else return wrongKill;
+    }
+    
+    public boolean getUnbegin() {
+        return now.before(getStartTime());
+    }
+    
+    public Long getTimeDiffMill() {
+        if (getUnbegin()) return (getStartTime().getTime() - now.getTime()) / NumberConstants.THOUSAND;
+        else if (getKilling()) return (getEndTime().getTime() - now.getTime()) / NumberConstants.THOUSAND;
+        else return NumberConstants.ZERO_LONG;
+    }
     
     @Override
     protected Serializable pkVal() {

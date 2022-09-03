@@ -13,6 +13,8 @@ import org.yjhking.tigercc.constants.MQConstants;
 import org.yjhking.tigercc.dto.PlaceCourseOrderTo;
 import org.yjhking.tigercc.service.IPayOrderService;
 
+import javax.annotation.Resource;
+
 @Slf4j
 @Component
 @RocketMQMessageListener(topic = MQConstants.TOPIC_COURSE_ORDER_DEALY,
@@ -22,7 +24,7 @@ import org.yjhking.tigercc.service.IPayOrderService;
 )
 public class PayOutTimeConsumer implements RocketMQListener<MessageExt> {
     
-    @Autowired
+    @Resource
     private IPayOrderService payOrderService;
     
     @Override
