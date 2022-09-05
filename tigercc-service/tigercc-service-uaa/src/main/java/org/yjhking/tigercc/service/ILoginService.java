@@ -19,4 +19,6 @@ public interface ILoginService extends IService<Login> {
     JsonResult save(RegisterDto dto);
     
     JsonResult common(LoginDto dto);
+    
+    Login selectByUsername(String username);
 }

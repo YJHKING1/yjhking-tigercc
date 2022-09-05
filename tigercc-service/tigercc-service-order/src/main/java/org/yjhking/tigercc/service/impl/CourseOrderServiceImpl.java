@@ -11,6 +11,7 @@ import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,7 @@ import org.yjhking.tigercc.domain.Course;
 import org.yjhking.tigercc.domain.CourseMarket;
 import org.yjhking.tigercc.domain.CourseOrder;
 import org.yjhking.tigercc.domain.CourseOrderItem;
-import org.yjhking.tigercc.dto.PayOrder2MQDto;
-import org.yjhking.tigercc.dto.PlaceCourseOrderTo;
-import org.yjhking.tigercc.dto.PlaceOrderDto;
+import org.yjhking.tigercc.dto.*;
 import org.yjhking.tigercc.enums.GlobalErrorCode;
 import org.yjhking.tigercc.exception.GlobalCustomException;
 import org.yjhking.tigercc.feignclient.CourseFeignClient;
@@ -39,9 +38,7 @@ import org.yjhking.tigercc.vo.CourseItemDataOrderVo;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -62,6 +59,8 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     private ICourseOrderItemService orderItemService;
     @Resource
     private RocketMQTemplate rocketMQTemplate;
+    @Resource
+    private RedissonClient redissonClient;
     
     @Override
     public String placeOrder(PlaceOrderDto dto) {
@@ -151,6 +150,20 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     
     @Override
     public void closeOrder(PlaceCourseOrderTo placeCourseOrderTo) {
+        String orderNo = placeCourseOrderTo.getOrderNo();
+        CourseOrder courseOrder = selectByOrderNo(orderNo);
+        AssertUtils.isNotNull(courseOrder, GlobalErrorCode.ORDER_TIME_ERROR);
+        if (courseOrder.getStatusOrder() == CourseOrder.STATE_WAIT_PAY) {
+            courseOrder.setStatusOrder(CourseOrder.STATE_AUTO_CANCEL);
+            courseOrder.setUpdateTime(new Date());
+            updateById(courseOrder);
+            if (Objects.equals(courseOrder.getOrderType(), NumberConstants.ONE)) {
+                // 退库存
+                redissonClient.getSemaphore(RedisConstants.STORE + orderItemService.selectList(
+                                new EntityWrapper<CourseOrderItem>().eq(CourseOrder.ORDER_NO, orderNo))
+                        .get(NumberConstants.ZERO).getKillCourseId()).release(courseOrder.getTotalCount());
+            }
+        }
         log.info("支付关单申请...");
         //查询ali支付配置参数
         // AlipayInfo alipayInfo = alipayInfoService.selectList(null).get(0);
@@ -159,9 +172,8 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         // Factory.setOptions(config);
         try {
             // 2. 发起API调用
-            AlipayTradeCloseResponse response = Factory.Payment.Common().close(placeCourseOrderTo.getOrderNo());
+            AlipayTradeCloseResponse response = Factory.Payment.Common().close(orderNo);
             if (response.code.equals("10000")) {
-                
                 log.info("关单成功");
             } else {
                 log.info("关单失败 {} , {} ", response.msg, response.subMsg);
@@ -170,5 +182,65 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
             log.error("支付申请异常 {}", e.getMessage());
             throw new GlobalCustomException(GlobalErrorCode.SERVICE_TRANSACTION_MESSAGE_FAILED);
         }
+    }
+    
+    @Override
+    public JsonResult killPlaceOrder(CourseKillOrderParamDto dto) {
+        // todo 假数据 用户id
+        Long loginId = 3L;
+        PreCourseOrder2RedisDto order2RedisDto = (PreCourseOrder2RedisDto) redisTemplate.opsForValue().get(
+                RedisConstants.ORDER + loginId + RedisConstants.REDIS_VERIFY + dto.getOrderNo());
+        AssertUtils.isNotNull(order2RedisDto, GlobalErrorCode.ORDER_NUM_ERROR);
+        // 参数校验
+        String token = (String) redisTemplate.opsForValue().get(
+                RedisConstants.TOKEN + loginId + order2RedisDto.getCourseId());
+        AssertUtils.isHasLength(token, GlobalErrorCode.ORDER_REPEAT);
+        AssertUtils.isEquals(token, dto.getToken(), GlobalErrorCode.SERVICE_ILLEGAL_REQUEST);
+        // 构建明细
+        Date now = new Date();
+        String orderSn = dto.getOrderNo();
+        CourseOrderItem courseOrderItem = new CourseOrderItem();
+        courseOrderItem.setAmount(order2RedisDto.getAmount());
+        courseOrderItem.setCount(order2RedisDto.getCount());
+        courseOrderItem.setCreateTime(now);
+        courseOrderItem.setCourseId(order2RedisDto.getCourseId());
+        courseOrderItem.setCourseName(order2RedisDto.getCourseName());
+        courseOrderItem.setCoursePic(order2RedisDto.getCoursePic());
+        courseOrderItem.setOrderNo(orderSn);
+        courseOrderItem.setSubtotalAmount(courseOrderItem.getAmount().multiply(
+                new BigDecimal(courseOrderItem.getCount())));
+        // 保存订单
+        CourseOrder courseOrder = new CourseOrder();
+        courseOrder.setCreateTime(now);
+        courseOrder.setDiscountAmount(new BigDecimal(NumberConstants.ZERO));
+        courseOrder.setOrderNo(orderSn);
+        courseOrder.setOrderType(NumberConstants.ONE);
+        courseOrder.setPayType(dto.getPayType());
+        courseOrder.setTotalAmount(order2RedisDto.getAmount());
+        courseOrder.setPayAmount(courseOrder.getTotalAmount().subtract(courseOrder.getDiscountAmount()));
+        courseOrder.setStatusOrder(CourseOrder.STATE_WAIT_PAY);
+        courseOrder.setTitle(TigerccConstants.KILL_ORDER + order2RedisDto.getCourseName());
+        courseOrder.setTotalCount(order2RedisDto.getCount());
+        courseOrder.setUserId(loginId);
+        courseOrder.getItems().add(courseOrderItem);
+        // 保存订单
+        Map<String, Object> extParams = new HashMap<>();
+        extParams.put("loginId", loginId);
+        extParams.put("courseIds", Collections.singletonList(order2RedisDto.getCourseId()));
+        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction(
+                MQConstants.MQ_COURSEORDER_PAY_GROUP_TRANSACTION, MQConstants.TOPIC_PAYORDER_TAGS_PAYORDER
+                , MessageBuilder.withPayload(JSON.toJSONString(new PayOrder2MQDto(courseOrder.getPayAmount()
+                                , courseOrder.getPayType(), orderSn, loginId, JSON.toJSONString(extParams)
+                                , courseOrder.getTitle())))
+                        .build(), courseOrder);
+        // 断言下单状态
+        AssertUtils.isEquals(transactionSendResult.getLocalTransactionState()
+                , LocalTransactionState.COMMIT_MESSAGE, GlobalErrorCode.ORDER_MISS);
+        // 断言发送事务消息状态
+        AssertUtils.isEquals(transactionSendResult.getSendStatus()
+                , SendStatus.SEND_OK, GlobalErrorCode.SERVICE_TRANSACTION_MESSAGE_FAILED);
+        // 删除token，防止重复提交
+        redisTemplate.delete(token);
+        return JsonResult.success(orderSn);
     }
 }

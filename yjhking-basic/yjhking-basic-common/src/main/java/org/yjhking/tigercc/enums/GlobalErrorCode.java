@@ -33,6 +33,7 @@ public enum GlobalErrorCode {
     
     // uaa服务异常：300xx
     UAA_ERROR("30000", "认证服务异常异常！"),
+    UAA_USER_IS_NULL("30001", "用户不存在！"),
     
     // user服务异常：400xx
     USER_ERROR("40000", "用户服务异常！"),
@@ -83,6 +84,7 @@ public enum GlobalErrorCode {
     ORDER_TYPE_ERROR("90004", "订单状态异常！"),
     ORDER_NUM_ERROR("90005", "订单号无效！"),
     ORDER_PROCESSED("90006", "订单已被处理！"),
+    ORDER_TIME_ERROR("90007", "删除超时订单失败，订单不存在！"),
     
     // pay服务异常：110xx
     PAY_ERROR("11000", "支付服务异常！"),
@@ -96,7 +98,12 @@ public enum GlobalErrorCode {
     KILL_COURSE_REPEAT("12001", "该课程已经存在！"),
     KILL_ACTIVITY_NOT_EXIST("12002", "活动不存在！"),
     KILL_EVENT_PUBLISHED("12003", "活动已经发布！"),
-    KILL_NO_ITEMS("12004", "活动下无商品！");
+    KILL_NO_ITEMS("12004", "活动下无商品！"),
+    KILL_ITEM_ERROR("12005", "无效的秒杀商品！"),
+    KILL_TIME_ERROR("12006", "秒杀时间非法！"),
+    KILL_IS_ERROR("12007", "秒杀失败！"),
+    KILL_REPEAT("12008", "不能重复秒杀！"),
+    KILL_ORDER_ERROR("12009", "删除超时订单失败，订单不存在！");
     
     // 异常码
     private String code;

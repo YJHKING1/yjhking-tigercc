@@ -45,4 +45,6 @@ public class RedisConstants {
     public static final String TOKEN = "token:";
     public static final String KILL_COURSES = "killCourses";
     public static final String STORE = "store:";
+    public static final String ORDER = "order:";
+    public static final String KILL_LOG = "kill_log:";
 }

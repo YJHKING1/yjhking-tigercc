@@ -46,4 +46,9 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, Login> implements
         AssertUtils.isEqualsTrim(login.getPassword(), dto.getPassword(), GlobalErrorCode.USER_PASSWORD_IS_ERROR);
         return JsonResult.success();
     }
+    
+    @Override
+    public Login selectByUsername(String username) {
+        return selectOne(new EntityWrapper<Login>().eq(Login.USERNAME, username));
+    }
 }

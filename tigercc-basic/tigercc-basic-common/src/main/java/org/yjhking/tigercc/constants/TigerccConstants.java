@@ -58,4 +58,5 @@ public class TigerccConstants {
     public static final String SEMICOLON = "；";
     public static final String ALIPAY_FAIL = "fail";
     public static final String ALIPAY_SUCCESS = "success";
+    public static final String KILL_ORDER = "秒杀下单：";
 }

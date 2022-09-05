@@ -3,6 +3,7 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.CourseOrder;
+import org.yjhking.tigercc.dto.CourseKillOrderParamDto;
 import org.yjhking.tigercc.dto.PlaceOrderDto;
 import org.yjhking.tigercc.query.CourseOrderQuery;
 import org.yjhking.tigercc.result.JsonResult;
@@ -71,5 +72,10 @@ public class CourseOrderController {
     @PostMapping("/placeOrder")
     public JsonResult placeOrder(@RequestBody PlaceOrderDto dto) {
         return JsonResult.success(courseOrderService.placeOrder(dto));
+    }
+    
+    @PostMapping("/killPlaceOrder")
+    public JsonResult killPlaceOrder(@RequestBody CourseKillOrderParamDto dto) {
+        return courseOrderService.killPlaceOrder(dto);
     }
 }

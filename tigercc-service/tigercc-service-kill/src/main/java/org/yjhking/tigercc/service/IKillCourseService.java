@@ -2,6 +2,7 @@ package org.yjhking.tigercc.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.KillCourse;
+import org.yjhking.tigercc.dto.KillParamDto;
 import org.yjhking.tigercc.result.JsonResult;
 
 /**
@@ -19,4 +20,8 @@ public interface IKillCourseService extends IService<KillCourse> {
     JsonResult onlineAll();
     
     JsonResult onlineOne(Long killId, Long activityId);
+    
+    JsonResult kill(KillParamDto dto);
+    
+    void cancelPreOrder(String orderKey);
 }

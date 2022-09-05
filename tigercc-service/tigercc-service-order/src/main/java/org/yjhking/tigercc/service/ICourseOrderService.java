@@ -2,8 +2,10 @@ package org.yjhking.tigercc.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import org.yjhking.tigercc.domain.CourseOrder;
+import org.yjhking.tigercc.dto.CourseKillOrderParamDto;
 import org.yjhking.tigercc.dto.PlaceCourseOrderTo;
 import org.yjhking.tigercc.dto.PlaceOrderDto;
+import org.yjhking.tigercc.result.JsonResult;
 
 /**
  * <p>
@@ -22,4 +24,6 @@ public interface ICourseOrderService extends IService<CourseOrder> {
     CourseOrder selectByOrderNo(String out_trade_no);
     
     void closeOrder(PlaceCourseOrderTo placeCourseOrderTo);
+    
+    JsonResult killPlaceOrder(CourseKillOrderParamDto dto);
 }

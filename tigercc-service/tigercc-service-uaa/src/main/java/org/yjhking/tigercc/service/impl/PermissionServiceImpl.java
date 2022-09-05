@@ -6,6 +6,9 @@ import org.yjhking.tigercc.domain.Permission;
 import org.yjhking.tigercc.mapper.PermissionMapper;
 import org.yjhking.tigercc.service.IPermissionService;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  * <p>
  * 权限表 服务实现类
@@ -16,5 +19,11 @@ import org.yjhking.tigercc.service.IPermissionService;
  */
 @Service
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements IPermissionService {
-
+    @Resource
+    private PermissionMapper permissionMapper;
+    
+    @Override
+    public List<Permission> selectByLoginId(Long id) {
+        return permissionMapper.selectByLoginId(id);
+    }
 }

@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @TableName("t_login")
 public class Login extends Model<Login> {
-    
+    public static final String USERNAME = "username";
     private static final long serialVersionUID = 1L;
     /**
      * 后台

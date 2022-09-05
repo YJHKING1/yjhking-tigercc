@@ -3,6 +3,7 @@ package org.yjhking.tigercc.web.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.springframework.web.bind.annotation.*;
 import org.yjhking.tigercc.domain.KillCourse;
+import org.yjhking.tigercc.dto.KillParamDto;
 import org.yjhking.tigercc.query.KillCourseQuery;
 import org.yjhking.tigercc.result.JsonResult;
 import org.yjhking.tigercc.result.PageList;
@@ -81,5 +82,9 @@ public class KillCourseController {
     @GetMapping("/online/one/{killId}/{activityId}")
     public JsonResult onlineOne(@PathVariable("killId") Long killId, @PathVariable("activityId") Long activityId) {
         return killCourseService.onlineOne(killId, activityId);
+    }
+    @PostMapping("/kill")
+    public JsonResult kill(@RequestBody @Valid KillParamDto dto) {
+        return killCourseService.kill(dto);
     }
 }

@@ -10,4 +10,12 @@
         <result column="menu_id" property="menuId"/>
         <result column="sn" property="sn"/>
     </resultMap>
+
+    <select id="selectByLoginId" resultMap="BaseResultMap">
+        select *
+        from t_login_role lr
+        join t_role_permission rp on lr.login_id = rp.role_id
+        join t_permission p on p.id = rp.permission_id
+        where lr.login_id = #{id}
+    </select>
 </mapper>

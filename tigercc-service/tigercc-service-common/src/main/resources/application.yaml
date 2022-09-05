@@ -1,5 +1,5 @@
 server:
-  port: 10130
+  port: 10131
 spring:
   application:
     name: service-common #服务名
