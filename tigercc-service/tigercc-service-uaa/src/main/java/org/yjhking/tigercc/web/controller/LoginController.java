@@ -19,7 +19,11 @@ public class LoginController {
     
     @Resource
     public ILoginService loginService;
-    
+    @RequestMapping("/loginSuccess")
+    @ResponseBody
+    public String loginSuccess(){
+        return "登录成功";
+    }
     /**
      * 保存和修改公用的
      */
