@@ -14,7 +14,7 @@ spring:
     database: 0
     host: 127.0.0.1
     port: 6379
-    password: root
+    password: '${TIGERCC_REDIS_PASSWORD}'
     jedis:
       pool:
         max-wait: 2000ms
@@ -22,7 +22,7 @@ spring:
         max-idle: 8
   datasource:
     username: root
-    password: root
+    password: '${TIGERCC_DB_PASSWORD}'
     url: jdbc:mysql:///tigercc-uaa?serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource # 使用ali的连接池

@@ -152,3 +152,11 @@ yjhking-tigercc
         │       └── tigercc-ui-user             // 门户-用户
         ├──pom.xml                              // 管理公共依赖以及SpringBoot,SpringCloud
 ```
+
+## 运行时凭据
+
+所有签发或验证 OAuth JWT 的服务使用同一个 `TIGERCC_JWT_SIGNING_KEY`。可用 `openssl rand -hex 32` 生成新密钥。切换后现有登录会话需重新登录。
+
+服务从运行环境读取 `TIGERCC_DB_PASSWORD` 和 `TIGERCC_REDIS_PASSWORD`。课程服务的对象存储需要 `TIGERCC_OSS_ACCESS_KEY` 和 `TIGERCC_OSS_SECRET_KEY`。百度内容审核读取 `BAIDU_AI_API_KEY` 和 `BAIDU_AI_SECRET_KEY`。
+
+手动运行支付宝沙箱示例前设置 `ALIPAY_SANDBOX_APP_ID`、`ALIPAY_SANDBOX_PRIVATE_KEY`、`ALIPAY_SANDBOX_PUBLIC_KEY` 和需要的 `ALIPAY_SANDBOX_NOTIFY_URL`。

@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,7 +24,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
      * 方法描述：1.资源服务安全配置
      ======================================================================================*/
     //JWT令牌秘钥
-    public static final String SIGN_KEY = "123";
+    @Value("${TIGERCC_JWT_SIGNING_KEY}")
+    private String signingKey;
     
     //1.1JWT令牌
     @Bean
@@ -36,7 +38,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public JwtAccessTokenConverter jwtAccessTokenConverter(){
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         //设置JWT签名密钥。它可以是简单的MAC密钥，也可以是RSA密钥
-        jwtAccessTokenConverter.setSigningKey(SIGN_KEY);
+        jwtAccessTokenConverter.setSigningKey(signingKey);
         return jwtAccessTokenConverter;
     }
     
