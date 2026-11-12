@@ -13,7 +13,6 @@ public class RedisConstants {
     /**
      * redis密码
      */
-    public static final String REDIS_PASSWORD = "root";
     /**
      * 手机短信验证码前缀
      */

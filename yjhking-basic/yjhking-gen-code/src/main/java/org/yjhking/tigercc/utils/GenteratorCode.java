@@ -34,7 +34,11 @@ public class GenteratorCode {
         dsc.setTypeConvert(new MySqlTypeConvert());
         dsc.setDriverName(rb.getString("jdbc.driver"));
         dsc.setUsername(rb.getString("jdbc.user"));
-        dsc.setPassword(rb.getString("jdbc.pwd"));
+        String dbPassword = System.getenv("TIGERCC_DB_PASSWORD");
+        if (dbPassword == null || dbPassword.isEmpty()) {
+            throw new IllegalStateException("TIGERCC_DB_PASSWORD is required");
+        }
+        dsc.setPassword(dbPassword);
         dsc.setUrl(rb.getString("jdbc.url"));
         mpg.setDataSource(dsc);
         // 表策略配置

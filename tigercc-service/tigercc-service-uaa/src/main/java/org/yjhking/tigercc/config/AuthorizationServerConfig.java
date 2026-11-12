@@ -1,5 +1,6 @@
 package org.yjhking.tigercc.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -89,14 +90,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     //2.4.配置令牌转换器 ，设置JWT签名密钥。它可以是简单的MAC密钥，也可以是RSA密钥
-    private final String sign_key  = "123";
+    @Value("${TIGERCC_JWT_SIGNING_KEY}")
+    private String signingKey;
 
     //JWT令牌校验工具
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter(){
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         //设置JWT签名密钥。它可以是简单的MAC密钥，也可以是RSA密钥
-        jwtAccessTokenConverter.setSigningKey(sign_key);
+        jwtAccessTokenConverter.setSigningKey(signingKey);
         return jwtAccessTokenConverter;
     }
 

@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 百度AI智能验证工具类
@@ -27,10 +25,11 @@ public class BaiduAiUtils {
      * }
      */
     public static String getAuth() {
-        // 官网获取的 API Key 更新为你注册的
-        String clientId = "ghe0Rr1qMySCKGXHoQr6idT9";
-        // 官网获取的 Secret Key 更新为你注册的
-        String clientSecret = "wX0OTMcM9lHRUwA5FV1rsoPefRKaBHVK";
+        String clientId = System.getenv("BAIDU_AI_API_KEY");
+        String clientSecret = System.getenv("BAIDU_AI_SECRET_KEY");
+        if (clientId == null || clientId.trim().isEmpty() || clientSecret == null || clientSecret.trim().isEmpty()) {
+            return null;
+        }
         return getAuth(clientId, clientSecret);
     }
     
@@ -59,10 +58,6 @@ public class BaiduAiUtils {
             HttpURLConnection connection = (HttpURLConnection) realUrl.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
-            // 获取所有响应头字段
-            Map<String, List<String>> map = connection.getHeaderFields();
-            // 遍历所有的响应头字段
-            map.keySet().stream().map(key -> key + "--->" + map.get(key)).forEach(System.err::println);
             // 定义 BufferedReader输入流来读取URL的响应
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String result = "";
@@ -71,27 +66,26 @@ public class BaiduAiUtils {
                 result += line;
             }
             // 返回结果示例
-            System.err.println("result:" + result);
             //将json格式的字符串 - 转成json格式的对象
             JSONObject jsonObject = JSONObject.parseObject(result);
             String access_token = jsonObject.getString("access_token");
             return access_token;
         } catch (Exception e) {
             System.err.printf("获取token失败！");
-            e.printStackTrace(System.err);
         }
         return null;
     }
     
     public static Boolean textCensor(String text) {
-        System.out.println("要审核的文字");
-        System.out.println(text);
         // 请求url
         String url = "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined";
         try {
             String param = "text=" + text;
             // 注意这里仅为了简化编码每一次请求都去获取access_token，线上环境access_token有过期时间， 客户端可自行缓存，过期后重新获取。
             String accessToken = getAuth();
+            if (accessToken == null) {
+                return false;
+            }
             String result = HttpUtil.post(url, accessToken, param);
             JSONObject jsonObject = JSONObject.parseObject(result);
             String conclusion = jsonObject.getString("conclusion");
@@ -99,14 +93,11 @@ public class BaiduAiUtils {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return false;
     }
     
     public static Boolean imgCensor(String imgUrl) {
-        System.out.println("要审核的图片地址");
-        System.out.println(imgUrl);
         // 请求url
         String url = "https://aip.baidubce.com/rest/2.0/solution/v1/img_censor/v2/user_defined";
         try {
@@ -115,6 +106,9 @@ public class BaiduAiUtils {
             String param = "imgUrl=" + imgParam;
             // 注意这里仅为了简化编码每一次请求都去获取access_token，线上环境access_token有过期时间， 客户端可自行缓存，过期后重新获取。
             String accessToken = getAuth();
+            if (accessToken == null) {
+                return false;
+            }
             String result = HttpUtil.post(url, accessToken, param);
             JSONObject jsonObject = JSONObject.parseObject(result);
             String conclusion = jsonObject.getString("conclusion");
@@ -122,7 +116,6 @@ public class BaiduAiUtils {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return false;
     }

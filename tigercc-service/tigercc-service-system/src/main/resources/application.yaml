@@ -9,7 +9,7 @@ spring:
         server-addr: 127.0.0.1:8848
   datasource:
     username: root
-    password: root
+    password: '${TIGERCC_DB_PASSWORD}'
     url: jdbc:mysql:///tigercc-system?serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource # 使用ali的连接池
